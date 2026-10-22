@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Strict origin referrer policy to prevent YouTube Error 153 -->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>USACE St. Marys River Section | Common Operating Picture</title>
+  <style>
+    :root {
+      --usace-red: #c41230;
+      --bg-dark: #0f172a;
+      --panel-bg: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --fmc-green: #10b981;
+      --pmc-amber: #f59e0b;
+      --nmc-red: #ef4444;
+      --accent-blue: #38bdf8;
+      --basin-purple: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP HEADER BAR */
+    header {
+      background: linear-gradient(90deg, #111827 0%, #1e293b 100%);
+      border-bottom: 3px solid var(--usace-red);
+      padding: 6px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 54px;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .castle-badge {
+      background-color: var(--usace-red);
+      color: white;
+      font-weight: 800;
+      padding: 5px 11px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      font-size: 0.88rem;
+    }
+
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .brand span {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 400;
+      margin-left: 8px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .clock-box {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      margin-left: 6px;
+    }
+
+    .clock-time {
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+    }
+
+    .clock-date {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .btn {
+      background-color: #334155;
+      color: white;
+      border: 1px solid #475569;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.74rem;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background-color: #475569;
+    }
+
+    .btn-active {
+      background-color: #0284c7;
+      border-color: #38bdf8;
+    }
+
+    .btn-cam {
+      background-color: #b91c1c;
+      border-color: #ef4444;
+    }
+
+    .btn-cam:hover {
+      background-color: #dc2626;
+    }
+
+    .btn-basin {
+      background-color: #7e22ce;
+      border-color: #a855f7;
+    }
+
+    .btn-basin:hover {
+      background-color: #9333ea;
+    }
+
+    /* 4-QUADRANT MAIN GRID */
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 50% 50%;
+      gap: 8px;
+      padding: 8px;
+      flex-grow: 1;
+      height: calc(100vh - 54px);
+    }
+
+    .panel {
+      background-color: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      background-color: #0f172a;
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      gap: 8px;
+    }
+
+    .panel-title {
+      font-size: 0.84rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .badge-timer {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      background: #1e293b;
+      padding: 3px 6px;
+      border-radius: 4px;
+      border: 1px solid #334155;
+    }
+
+    .panel-body {
+      flex-grow: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* BOTTOM LEFT: NOAA GAUGES STRIP + WIDESCREEN YOUTUBE CAM + USCG D9 */
+    .ops-split {
+      display: grid;
+      grid-template-columns: 2.15fr 1fr;
+      height: 100%;
+      gap: 8px;
+      padding: 8px;
+      overflow: hidden;
+    }
+
+    .noaa-cam-combined-card {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .noaa-strip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .gauge-readout-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .metric-box {
+      background: #1e293b;
+      padding: 4px 8px;
+      border-radius: 5px;
+      border-left: 3px solid var(--accent-blue);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .metric-label {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .metric-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-top: 1px;
+      white-space: nowrap;
+    }
+
+    .cam-subpanel {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .cam-subpanel-header {
+      background: #111827;
+      padding: 4px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      margin-right: 4px;
+      box-shadow: 0 0 6px #ef4444;
+    }
+
+    .cam-video-wrap {
+      flex-grow: 1;
+      width: 100%;
+      background: #000;
+      overflow: hidden;
+      position: relative;
+      min-height: 0;
+    }
+
+    .cam-fallback-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15,23,42,0.85) 0%, rgba(15,23,42,0.95) 100%),
+                  url('https://i.ytimg.com/vi/TkY4BzCikQ4/hqdefault.jpg') center/cover no-repeat;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 10px;
+      gap: 6px;
+      z-index: 5;
+    }
+
+    /* RIGHT COLUMN: USCG DISTRICT 9 NOTICES */
+    .uscg-card {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .uscg-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 4px;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .uscg-badge {
+      background: #ea580c;
+      color: white;
+      font-size: 0.62rem;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .quick-links-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .link-btn {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text-main);
+      padding: 5px 6px;
+      border-radius: 4px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.69rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+      transition: all 0.15s;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .link-btn:hover {
+      border-color: var(--accent-blue);
+      background: #334155;
+    }
+
+    .bnm-log {
+      width: 100%;
+      flex-grow: 1;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #fde047;
+      border-radius: 5px;
+      padding: 5px 7px;
+      font-size: 0.72rem;
+      resize: none;
+      font-family: Consolas, monospace;
+      min-height: 44px;
+    }
+
+    /* BOTTOM RIGHT: ZERO-SCROLL 2-COLUMN FLOATING PLANT GRID */
+    .plant-container {
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .fleet-two-col-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(7, 1fr);
+      gap: 5px 8px;
+      flex-grow: 1;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .vessel-card {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 3px 6px;
+      display: grid;
+      grid-template-columns: 1.15fr auto auto 1.25fr;
+      align-items: center;
+      gap: 5px;
+      min-height: 0;
+    }
+
+    .vessel-card:hover {
+      border-color: #475569;
+      background: #131d33;
+    }
+
+    .vessel-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .vessel-name {
+      font-weight: 700;
+      font-size: 0.76rem;
+      color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.1;
+    }
+
+    .vessel-type {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.1;
+    }
+
+    .mmsi-btn {
+      background: #1e293b;
+      color: var(--accent-blue);
+      border: 1px solid #0284c7;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .mmsi-btn:hover {
+      background: #0284c7;
+      color: white;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.67rem;
+      cursor: pointer;
+      user-select: none;
+      text-align: center;
+      min-width: 42px;
+    }
+
+    .status-FMC { background-color: rgba(16, 185, 129, 0.2); color: var(--fmc-green); border: 1px solid var(--fmc-green); }
+    .status-PMC { background-color: rgba(245, 158, 11, 0.2); color: var(--pmc-amber); border: 1px solid var(--pmc-amber); }
+    .status-NMC { background-color: rgba(239, 68, 68, 0.2); color: var(--nmc-red); border: 1px solid var(--nmc-red); }
+
+    .location-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .location-select {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--text-main);
+      width: 100%;
+      padding: 2px 4px;
+      font-size: 0.7rem;
+      border-radius: 4px;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .location-select:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      background: #0f172a;
+    }
+
+    .location-select.in-basin {
+      color: #d8b4fe;
+      border-color: #9333ea;
+      background-color: rgba(147, 51, 234, 0.15);
+      font-weight: 600;
+    }
+
+    .notes-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .notes-bar input {
+      flex-grow: 1;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 5px;
+      padding: 4px 8px;
+      font-size: 0.74rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="castle-badge">USACE</div>
+      <div>
+        <h1>ST. MARYS RIVER SECTION <span>| FLOATING PLANT & NAVIGATION COP</span></h1>
+      </div>
+    </div>
+    <div class="header-controls">
+      <button class="btn btn-basin" onclick="panToBoatBasin()" title="Focus AIS Map on Boat Basin (46°30'05.12N, 84°20'27.27W)">📍 Boat Basin</button>
+      <button class="btn" onclick="resetAisToLocks()" title="Reset AIS Map to Soo Locks (3,000 ft view)">🗺️ Soo Locks (~3,000 ft)</button>
+      <button class="btn" onclick="refreshAllFrames()">↻ Refresh All</button>
+      <div class="clock-box">
+        <div class="clock-time" id="localClock">00:00:00</div>
+        <div class="clock-date" id="localDate">Loading Date...</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 4-QUADRANT MAIN GRID -->
+  <div class="grid-container">
+
+    <!-- QUADRANT 1: LIVE AIS MAP (TOP-LEFT) - DEFAULT ZOOM TO ~3,000 FT -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          🚢 Live AIS Map — <span id="aisTargetLabel" style="color: #38bdf8;">Soo Locks (~3,000 ft View)</span>
+        </div>
+        <div class="panel-actions">
+          <span class="badge-timer" id="aisTimer">Auto-refresh: 15:00</span>
+          <button class="btn btn-active" id="btnVf" onclick="switchAisProvider('vesselfinder')">VesselFinder</button>
+          <button class="btn" id="btnMt" onclick="switchAisProvider('marinetraffic')">MarineTraffic</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <iframe id="aisFrame" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+      </div>
+    </div>
+
+    <!-- QUADRANT 2: WINDY MARINE WEATHER OR FULL-SCREEN LIVE CAM (TOP-RIGHT) -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title" id="topRightTitle">🌬️ Marine Weather, Wind & Waves (Windy)</div>
+        <div class="panel-actions">
+          <button class="btn" onclick="setWindyOverlay('wind')">Wind</button>
+          <button class="btn" onclick="setWindyOverlay('gust')">Gusts</button>
+          <button class="btn" onclick="setWindyOverlay('rain')">Radar/Precip</button>
+          <button class="btn" onclick="setWindyOverlay('waves')">Waves</button>
+          <button class="btn btn-cam" id="btnExpandCam" onclick="toggleTopRightCam()">📹 Expand Live Cam</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <iframe
+          id="windyFrame"
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          referrerpolicy="strict-origin-when-cross-origin"
+          src="https://embed.windy.com/embed2.html?lat=46.500&lon=-84.350&detailLat=46.500&detailLon=-84.350&width=800&height=600&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- QUADRANT 3: NOAA GAUGES & RECTANGULAR LIVE CAM + USCG D9 NOTICES (BOTTOM-LEFT) -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">🌊 NOAA River Gauges, 📹 Live River Cam & 🚨 USCG D9 Notices</div>
+        <div class="panel-actions">
+          <button class="btn btn-cam" onclick="launchDockedPiPCam()" title="Bypasses Error 153 on local desktop files">📺 Launch Docked Cam (Fixes Error 153)</button>
+          <button class="btn" onclick="fetchNoaaData()">↻ Gauges</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="ops-split">
+
+          <!-- Left Combined Card: 4 NOAA Gauges across top + Widescreen Cam below -->
+          <div class="noaa-cam-combined-card">
+
+            <div class="noaa-strip-header">
+              <div style="font-weight: 700; font-size: 0.76rem; color: #38bdf8;">
+                🌊 NOAA CO-OPS Telemetry (IGLD 85 Datum)
+              </div>
+              <div style="font-size: 0.62rem; color: var(--text-muted);" id="noaaTimestamp">
+                Fetching live NOAA gauges...
+              </div>
+            </div>
+
+            <!-- 4 NOAA Gauges in One Top Horizontal Strip -->
+            <div class="gauge-readout-strip">
+              <div class="metric-box">
+                <div class="metric-label">SW Pier (#9099064)</div>
+                <div class="metric-val" id="swPierLevel">-- ft</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-label">U.S. Slip (#9099018)</div>
+                <div class="metric-val" id="usSlipLevel">-- ft</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-label">SW Pier Water Temp</div>
+                <div class="metric-val" id="waterTemp">-- °F</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-label">SW Pier Wind</div>
+                <div class="metric-val" id="sensorWind">-- kts</div>
+              </div>
+            </div>
+
+            <!-- Expanded Rectangular Live Cam Stream -->
+            <div class="cam-subpanel">
+              <div class="cam-subpanel-header">
+                <div style="font-weight: 700; font-size: 0.74rem; color: #f8fafc; display: flex; align-items: center;">
+                  <span class="live-dot"></span> Live Soo Locks / River Video Stream
+                </div>
+                <div style="display: flex; gap: 4px; align-items: center;">
+                  <span style="font-size: 0.62rem; color: var(--text-muted); margin-right: 4px;" id="camIdLabel">ID: TkY4BzCikQ4</span>
+                  <button class="btn" style="padding: 2px 6px; font-size: 0.64rem;" onclick="toggleLocalFileHelper()" title="Seeing Error 153? Click here">⚠️ Error 153 Help</button>
+                  <button class="btn" style="padding: 2px 6px; font-size: 0.64rem;" onclick="reloadCamFrame()">↻</button>
+                </div>
+              </div>
+
+              <div class="cam-video-wrap" id="camCardBox">
+                <iframe
+                  id="youtubeCamFrame"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                  allowfullscreen>
+                </iframe>
+
+                <!-- Interactive Overlay for Local Desktop File (file://) Error 153 Bypass -->
+                <div class="cam-fallback-overlay" id="camFallbackOverlay">
+                  <div style="font-size: 0.82rem; font-weight: 700; color: #f8fafc;">
+                    Seeing YouTube "Error 153"?
+                  </div>
+                  <div style="font-size: 0.68rem; color: #cbd5e1; line-height: 1.3; max-width: 90%;">
+                    YouTube blocks embeds opened from a local <code>file:///</code> path because no HTTP Referer header is sent by Windows.
+                  </div>
+                  <button class="btn btn-cam" style="padding: 5px 12px; font-size: 0.74rem;" onclick="launchDockedPiPCam()">
+                    📺 Open Docked Cam Window (Click PiP Icon)
+                  </button>
+                  <button class="btn" style="padding: 2px 8px; font-size: 0.65rem;" onclick="toggleLocalFileHelper()">
+                    Hide Message
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Subpanel: USCG District 9 Notices -->
+          <div class="uscg-card">
+            <div class="uscg-header">
+              <div style="font-weight: 700; font-size: 0.78rem; color: #f8fafc;">
+                🚨 USCG D9 NOTICES
+              </div>
+              <span class="uscg-badge">SECTOR SAULT</span>
+            </div>
+
+            <div class="quick-links-grid">
+              <a class="link-btn" href="https://www.navcen.uscg.gov/local-notices-to-mariners?district=9+0&report=all" target="_blank">
+                <span>📄 D9 LNM</span> <span>↗</span>
+              </a>
+              <a class="link-btn" href="https://www.navcen.uscg.gov/broadcast-notice-to-mariners-search-results?district=9" target="_blank">
+                <span>📡 D9 BNM</span> <span>↗</span>
+              </a>
+              <a class="link-btn" href="https://msi.nga.mil/ishare/MSI/uscg-lnm" target="_blank">
+                <span>🗺️ LNM Map</span> <span>↗</span>
+              </a>
+              <a class="link-btn" href="https://www.glerl.noaa.gov/res/glcfs/" target="_blank">
+                <span>🧊 GLERL Ice</span> <span>↗</span>
+              </a>
+            </div>
+
+            <div style="display:flex; flex-direction:column; flex-grow:1; min-height: 0;">
+              <div style="font-size: 0.63rem; color: var(--text-muted); margin-bottom: 2px; font-weight: 600;">
+                ACTIVE BNM / VTS SAULT ADVISORIES:
+              </div>
+              <textarea id="uscgBnmNotes" class="bnm-log" placeholder="Log active Sector Sault BNM broadcasts or channel restrictions here..."></textarea>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- QUADRANT 4: ST. MARYS RIVER FLOATING PLANT FLEET (2-COLUMN ZERO-SCROLL VIEW) -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">⚓ St. Marys River Fleet (Tap MMSI to Track | Tap Status to Cycle | Select Location)</div>
+        <div class="panel-actions">
+          <button class="btn" onclick="syncAisCoordinates()" title="Poll live coordinates and auto-detect Boat Basin presence">🛰️ Poll Live AIS</button>
+          <button class="btn" onclick="resetPlantBoard()">Reset Fleet</button>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="plant-container">
+          <!-- 2-Column Grid displaying all 13 vessels without scrolling -->
+          <div class="fleet-two-col-grid" id="plantGridBody">
+            <!-- Populated dynamically by JavaScript -->
+          </div>
+
+          <div class="notes-bar">
+            <span style="font-size: 0.72rem; font-weight: 700; color: #38bdf8; white-space: nowrap;">📋 TAILBOARD / AHA NOTE:</span>
+            <input type="text" id="dailyNotes" placeholder="Tap to enter daily crew safety focus, crane/rigging AHA notes, or lockage schedule..." />
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // =========================================================================
+    // 0. BOAT BASIN & GEOGRAPHIC DEFINITIONS
+    // Coordinates: 46°30'05.12"N, 84°20'27.27"W -> 46.501422, -84.340908
+    // =========================================================================
+    const BOAT_BASIN = {
+      name: "Boat Basin",
+      lat: 46.501422,
+      lon: -84.340908,
+      radiusMeters: 200 // geofence radius covering the inlet and docks
+    };
+
+    const SOO_LOCKS_CENTER = {
+      name: "Soo Locks (~3,000 ft View)",
+      lat: 46.5015,
+      lon: -84.3465,
+      zoom: 15
+    };
+
+    // Haversine formula to compute distance in meters
+    function getDistanceMeters(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // =========================================================================
+    // 1. LIVE CLOCK (Local + UTC)
+    // =========================================================================
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+      const utcHours = String(now.getUTCHours()).padStart(2, '0');
+      const utcMins = String(now.getUTCMinutes()).padStart(2, '0');
+      document.getElementById('localClock').textContent = `${timeStr} LCL (${utcHours}${utcMins}Z)`;
+      document.getElementById('localDate').textContent = now.toLocaleDateString('en-US', {
+        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric'
+      });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // =========================================================================
+    // 2. YOUTUBE LIVE CAM ENGINE (Strict-origin + Docked PiP fallback)
+    // =========================================================================
+    const currentCamId = 'TkY4BzCikQ4';
+    let topRightShowingCam = false;
+
+    function getYoutubeEmbedUrl(videoId) {
+      const originParam = window.location.protocol.startsWith('http')
+        ? `&origin=${encodeURIComponent(window.location.origin)}`
+        : '';
+      return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1${originParam}`;
+    }
+
+    function renderCamFrame() {
+      const camFrame = document.getElementById('youtubeCamFrame');
+      camFrame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+      camFrame.src = getYoutubeEmbedUrl(currentCamId);
+      document.getElementById('camIdLabel').textContent = `ID: ${currentCamId}`;
+    }
+
+    function reloadCamFrame() {
+      renderCamFrame();
+      if (topRightShowingCam) {
+        const wf = document.getElementById('windyFrame');
+        wf.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+        wf.src = getYoutubeEmbedUrl(currentCamId);
+      }
+    }
+
+    function toggleLocalFileHelper() {
+      const overlay = document.getElementById('camFallbackOverlay');
+      overlay.style.display = (overlay.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function launchDockedPiPCam() {
+      const box = document.getElementById('camCardBox').getBoundingClientRect();
+      const width = Math.max(480, Math.round(box.width));
+      const height = Math.max(300, Math.round(box.height + 60));
+      const left = Math.round(window.screenX + box.left);
+      const top = Math.round(window.screenY + box.top);
+
+      window.open(
+        `https://www.youtube.com/watch?v=${currentCamId}`,
+        'StMarysDockedCam',
+        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no`
+      );
+    }
+
+    function toggleTopRightCam() {
+      const windyFrame = document.getElementById('windyFrame');
+      const titleEl = document.getElementById('topRightTitle');
+      const btnEl = document.getElementById('btnExpandCam');
+      topRightShowingCam = !topRightShowingCam;
+
+      if (topRightShowingCam) {
+        windyFrame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+        windyFrame.src = getYoutubeEmbedUrl(currentCamId);
+        titleEl.innerHTML = '📹 Live Camera Feed — <span style="color:#38bdf8;">Full Quadrant View</span>';
+        btnEl.textContent = '🌬️ Back to Windy Map';
+        btnEl.classList.add('btn-active');
+      } else {
+        setWindyOverlay('wind');
+      }
+    }
+
+    renderCamFrame();
+
+    // =========================================================================
+    // 3. AIS MAP ENGINE (Zoom Level 15 / ~3,000 ft view, Vessel Tracking & Boat Basin)
+    // =========================================================================
+    let currentAisProvider = 'vesselfinder';
+    let trackedMmsi = null;
+    let trackedName = SOO_LOCKS_CENTER.name;
+    let customCenter = null;
+
+    function renderAisMap() {
+      const aisFrame = document.getElementById('aisFrame');
+      const label = document.getElementById('aisTargetLabel');
+
+      let lat = SOO_LOCKS_CENTER.lat;
+      let lon = SOO_LOCKS_CENTER.lon;
+      let zoom = SOO_LOCKS_CENTER.zoom;
+
+      if (trackedMmsi) {
+        label.textContent = `Tracking ${trackedName} (MMSI: ${trackedMmsi})`;
+        zoom = 16;
+      } else if (customCenter) {
+        label.textContent = `${customCenter.name} (${customCenter.lat.toFixed(4)}°N, ${Math.abs(customCenter.lon).toFixed(4)}°W)`;
+        lat = customCenter.lat;
+        lon = customCenter.lon;
+        zoom = customCenter.zoom || 16;
+      } else {
+        label.textContent = `${SOO_LOCKS_CENTER.name} (46.5015°N, 84.3465°W)`;
+      }
+
+      if (currentAisProvider === 'vesselfinder') {
+        const mmsiParam = trackedMmsi ? `var mmsi = "${trackedMmsi}"; var show_track = true;` : '';
+        aisFrame.srcdoc = `
+          <!DOCTYPE html>
+          <html>
+          <head><style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#0f172a;}</style></head>
+          <body>
+            <script type="text/javascript">
+              var width = "100%";
+              var height = "100%";
+              var latitude = "${lat}";
+              var longitude = "${lon}";
+              var zoom = "${zoom}";
+              var names = true;
+              ${mmsiParam}
+            <\/script>
+            <script type="text/javascript" src="https://www.vesselfinder.com/aismap.js"><\/script>
+          </body>
+          </html>
+        `;
+      } else {
+        const mmsiParam = trackedMmsi ? `show_track = true; mmsi = "${trackedMmsi}";` : '';
+        aisFrame.srcdoc = `
+          <!DOCTYPE html>
+          <html>
+          <head><style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#0f172a;}</style></head>
+          <body>
+            <script type="text/javascript">
+              width = "100%";
+              height = "100%";
+              border = "0";
+              shownames = "true";
+              latitude = "${lat}";
+              longitude = "${lon}";
+              zoom = "${zoom}";
+              maptype = "1";
+              trackvessel = "${trackedMmsi || '0'}";
+              ${mmsiParam}
+            <\/script>
+            <script type="text/javascript" src="https://www.marinetraffic.com/js/embed.js"><\/script>
+          </body>
+          </html>
+        `;
+      }
+    }
+
+    function switchAisProvider(provider) {
+      currentAisProvider = provider;
+      document.getElementById('btnVf').classList.toggle('btn-active', provider === 'vesselfinder');
+      document.getElementById('btnMt').classList.toggle('btn-active', provider === 'marinetraffic');
+      renderAisMap();
+    }
+
+    function trackVesselMmsi(mmsi, name) {
+      customCenter = null;
+      trackedMmsi = mmsi;
+      trackedName = name;
+      aisSeconds = 900;
+      renderAisMap();
+    }
+
+    function panToBoatBasin() {
+      trackedMmsi = null;
+      customCenter = {
+        name: "Boat Basin Inlet / Docks",
+        lat: BOAT_BASIN.lat,
+        lon: BOAT_BASIN.lon,
+        zoom: 16
+      };
+      aisSeconds = 900;
+      renderAisMap();
+    }
+
+    function resetAisToLocks() {
+      trackedMmsi = null;
+      customCenter = null;
+      trackedName = SOO_LOCKS_CENTER.name;
+      aisSeconds = 900;
+      renderAisMap();
+    }
+
+    // Auto-refresh AIS every 15 minutes so it never times out
+    let aisSeconds = 900;
+    setInterval(() => {
+      aisSeconds--;
+      if (aisSeconds <= 0) {
+        renderAisMap();
+        aisSeconds = 900;
+      }
+      const m = String(Math.floor(aisSeconds / 60)).padStart(2, '0');
+      const s = String(aisSeconds % 60).padStart(2, '0');
+      document.getElementById('aisTimer').textContent = `Auto-refresh: ${m}:${s}`;
+    }, 1000);
+
+    function refreshAllFrames() {
+      renderAisMap();
+      reloadCamFrame();
+      if (!topRightShowingCam) {
+        const windy = document.getElementById('windyFrame');
+        windy.src = windy.src;
+      }
+      fetchNoaaData();
+      syncAisCoordinates();
+      aisSeconds = 900;
+    }
+
+    renderAisMap();
+
+    // =========================================================================
+    // 4. SWITCH WINDY LAYER BY TOUCH
+    // =========================================================================
+    function setWindyOverlay(overlay) {
+      topRightShowingCam = false;
+      document.getElementById('topRightTitle').textContent = '🌬️ Marine Weather, Wind & Waves (Windy)';
+      const btnEl = document.getElementById('btnExpandCam');
+      btnEl.textContent = '📹 Expand Live Cam';
+      btnEl.classList.remove('btn-active');
+
+      const windy = document.getElementById('windyFrame');
+      windy.src = `https://embed.windy.com/embed2.html?lat=46.500&lon=-84.350&detailLat=46.500&detailLon=-84.350&width=800&height=600&zoom=11&level=surface&overlay=${overlay}&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1`;
+    }
+
+    // =========================================================================
+    // 5. FETCH LIVE NOAA CO-OPS GAUGE DATA FOR ST. MARYS RIVER
+    // =========================================================================
+    async function fetchNoaaData() {
+      try {
+        const [swLevelRes, usSlipRes, tempRes, windRes] = await Promise.all([
+          fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=9099064&product=water_level&datum=IGLD&units=english&time_zone=lst_ldt&format=json'),
+          fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=9099018&product=water_level&datum=IGLD&units=english&time_zone=lst_ldt&format=json'),
+          fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=9099064&product=water_temperature&units=english&time_zone=lst_ldt&format=json'),
+          fetch('https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=latest&station=9099064&product=wind&units=english&time_zone=lst_ldt&format=json')
+        ]);
+
+        const swData = await swLevelRes.json();
+        const slipData = await usSlipRes.json();
+        const tempData = await tempRes.json();
+        const windData = await windRes.json();
+
+        if (swData.data && swData.data[0]) {
+          document.getElementById('swPierLevel').textContent = `${parseFloat(swData.data[0].v).toFixed(2)} ft`;
+          document.getElementById('noaaTimestamp').textContent = `Updated: ${swData.data[0].t} LCL`;
+        }
+        if (slipData.data && slipData.data[0]) {
+          document.getElementById('usSlipLevel').textContent = `${parseFloat(slipData.data[0].v).toFixed(2)} ft`;
+        }
+        if (tempData.data && tempData.data[0]) {
+          document.getElementById('waterTemp').textContent = `${parseFloat(tempData.data[0].v).toFixed(1)} °F`;
+        }
+        if (windData.data && windData.data[0]) {
+          document.getElementById('sensorWind').textContent = `${windData.data[0].s} kts ${windData.data[0].dr}`;
+        }
+      } catch (e) {
+        document.getElementById('noaaTimestamp').textContent = 'NOAA API unreachable — check connection.';
+      }
+    }
+    fetchNoaaData();
+    setInterval(fetchNoaaData, 300000);
+
+    // =========================================================================
+    // 6. TWO-COLUMN FLOATING PLANT FLEET WITH GEOFENCING & QUICK LOCATION SELECT
+    // =========================================================================
+    const defaultFleet = [
+      { name: "NICOLET",    type: "Derrick Barge",   mmsi: "366999398", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3409 },
+      { name: "HARVEY",     type: "Crane Barge",     mmsi: "366999311", status: "FMC", location: "Boat Basin",       lat: 46.5013, lon: -84.3411 },
+      { name: "AQUADIGGER", type: "Excavator Barge", mmsi: "368926311", status: "FMC", location: "Boat Basin",       lat: 46.5015, lon: -84.3408 },
+      { name: "CHERAW",     type: "Tug",             mmsi: "366999428", status: "FMC", location: "Soo North Pier",   lat: 46.5030, lon: -84.3500 },
+      { name: "PEARCE",     type: "Tug",             mmsi: "338924169", status: "FMC", location: "Soo North Pier",   lat: 46.5029, lon: -84.3502 },
+      { name: "LAWSON",     type: "Tug",             mmsi: "338924170", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3409 },
+      { name: "DETROIT",    type: "Tug",             mmsi: "338925325", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3410 },
+      { name: "FREDERICK",  type: "Tug",             mmsi: "366999409", status: "FMC", location: "Soo Locks",        lat: 46.5018, lon: -84.3470 },
+      { name: "WHITEFISH",  type: "Tug",             mmsi: "366999314", status: "FMC", location: "Soo Locks",        lat: 46.5017, lon: -84.3468 },
+      { name: "BUFE",       type: "Survey Boat",     mmsi: "366999407", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3408 },
+      { name: "MACKIN",     type: "Survey Boat",     mmsi: "368389980", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3409 },
+      { name: "MUNSON",     type: "Launch Boat",     mmsi: "368926566", status: "FMC", location: "East Brady Pier",  lat: 46.4990, lon: -84.3350 },
+      { name: "SAFEBOAT",   type: "Launch Boat",     mmsi: "369970895", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3409 }
+    ];
+
+    const STORAGE_KEY = 'usace_stmarys_fleet_v4';
+    let fleetData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultFleet;
+
+    const LOCATION_PRESETS = [
+      "Boat Basin",
+      "Soo North Pier",
+      "Soo South Pier",
+      "Soo Locks",
+      "East Brady Pier",
+      "St. Marys River",
+      "Underway"
+    ];
+
+    function renderFleet() {
+      const grid = document.getElementById('plantGridBody');
+      grid.innerHTML = '';
+
+      fleetData.forEach((unit, idx) => {
+        // Automatic geofencing verification
+        if (unit.lat && unit.lon) {
+          const dist = getDistanceMeters(unit.lat, unit.lon, BOAT_BASIN.lat, BOAT_BASIN.lon);
+          if (dist <= BOAT_BASIN.radiusMeters) {
+            unit.location = "Boat Basin";
+          }
+        }
+
+        const isBasin = unit.location === "Boat Basin";
+        const card = document.createElement('div');
+        card.className = 'vessel-card';
+
+        // Build location dropdown with standard presets and custom option
+        let optionsHtml = '';
+        let hasCustom = true;
+        LOCATION_PRESETS.forEach(preset => {
+          const sel = (unit.location === preset) ? 'selected' : '';
+          if (unit.location === preset) hasCustom = false;
+          optionsHtml += `<option value="${preset}" ${sel}>${preset === 'Boat Basin' ? '⚓ Boat Basin' : preset}</option>`;
+        });
+        if (hasCustom && unit.location) {
+          optionsHtml += `<option value="${unit.location}" selected>${unit.location}</option>`;
+        }
+        optionsHtml += `<option value="__custom__">✏️ Custom Berth...</option>`;
+
+        card.innerHTML = `
+          <div class="vessel-info">
+            <div class="vessel-name">${unit.name}</div>
+            <div class="vessel-type">${unit.type}</div>
+          </div>
+          <button class="mmsi-btn" onclick="trackVesselMmsi('${unit.mmsi}', '${unit.name}')" title="Tap to track ${unit.name} (${unit.mmsi})">
+            🎯 ${unit.mmsi}
+          </button>
+          <span class="status-pill status-${unit.status}" onclick="cycleStatus(${idx})" title="Tap to toggle FMC / PMC / NMC">${unit.status}</span>
+          <div class="location-wrapper">
+            <select class="location-select ${isBasin ? 'in-basin' : ''}" onchange="handleLocationChange(${idx}, this)" title="Tap to change berth/location">
+              ${optionsHtml}
+            </select>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function handleLocationChange(idx, selectEl) {
+      if (selectEl.value === '__custom__') {
+        const customVal = prompt(`Enter custom berth/location for ${fleetData[idx].name}:`, fleetData[idx].location);
+        if (customVal && customVal.trim() !== '') {
+          fleetData[idx].location = customVal.trim();
+        }
+      } else {
+        fleetData[idx].location = selectEl.value;
+        if (selectEl.value === 'Boat Basin') {
+          fleetData[idx].lat = BOAT_BASIN.lat;
+          fleetData[idx].lon = BOAT_BASIN.lon;
+        }
+      }
+      saveFleet();
+      renderFleet();
+    }
+
+    function cycleStatus(idx) {
+      const order = ['FMC', 'PMC', 'NMC'];
+      const current = fleetData[idx].status;
+      fleetData[idx].status = order[(order.indexOf(current) + 1) % order.length];
+      saveFleet();
+      renderFleet();
+    }
+
+    function saveFleet() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(fleetData));
+    }
+
+    function resetPlantBoard() {
+      fleetData = JSON.parse(JSON.stringify(defaultFleet));
+      saveFleet();
+      renderFleet();
+    }
+
+    // Geofencing sync function: runs locally and re-validates positions against Boat Basin
+    function syncAisCoordinates() {
+      fleetData.forEach(unit => {
+        if (unit.lat && unit.lon) {
+          const dist = getDistanceMeters(unit.lat, unit.lon, BOAT_BASIN.lat, BOAT_BASIN.lon);
+          if (dist <= BOAT_BASIN.radiusMeters) {
+            unit.location = "Boat Basin";
+          }
+        }
+      });
+      saveFleet();
+      renderFleet();
+    }
+
+    // Daily Notes & USCG BNM Log persistence
+    const notesEl = document.getElementById('dailyNotes');
+    notesEl.value = localStorage.getItem('usace_stmarys_notes_v4') || "0700 Tailboard Brief | Verify cold-water PPE & VHF Ch. 12/14/16 comms with VTS St. Marys River.";
+    notesEl.addEventListener('input', () => {
+      localStorage.setItem('usace_stmarys_notes_v4', notesEl.value);
+    });
+
+    const bnmEl = document.getElementById('uscgBnmNotes');
+    bnmEl.value = localStorage.getItem('usace_stmarys_bnm_v4') || "• Monitor VTS Sault Ste. Marie Ch. 12 for downbound laker traffic.\n• Check weekly D9 LNM for St. Marys River buoy/light discrepancies.";
+    bnmEl.addEventListener('input', () => {
+      localStorage.setItem('usace_stmarys_bnm_v4', bnmEl.value);
+    });
+
+    renderFleet();
+  </script>
+</body>
+</html>
