@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Strict origin referrer policy to prevent YouTube Error 153 -->
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <title>USACE St. Marys River Section | Common Operating Picture</title>
+  <title>USACE St. Marys River Section | Common Operating Picture v2.0</title>
   <style>
     :root {
       --usace-red: #c41230;
@@ -19,6 +19,7 @@
       --nmc-red: #ef4444;
       --accent-blue: #38bdf8;
       --basin-purple: #a855f7;
+      --dam-yellow: #eab308;
     }
 
     * {
@@ -85,10 +86,21 @@
       gap: 8px;
     }
 
+    .version-tag {
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      border: 1px solid #38bdf8;
+    }
+
     .clock-box {
       text-align: right;
       font-variant-numeric: tabular-nums;
-      margin-left: 6px;
+      margin-left: 4px;
     }
 
     .clock-time {
@@ -133,13 +145,25 @@
       background-color: #dc2626;
     }
 
-    .btn-basin {
-      background-color: #7e22ce;
-      border-color: #a855f7;
+    .btn-refresh-all {
+      background-color: #047857;
+      border-color: #10b981;
+      font-weight: 700;
     }
 
-    .btn-basin:hover {
-      background-color: #9333ea;
+    .btn-refresh-all:hover {
+      background-color: #059669;
+    }
+
+    .btn-fs {
+      background-color: #0369a1;
+      border-color: #38bdf8;
+      font-weight: 700;
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.35);
+    }
+
+    .btn-fs:hover {
+      background-color: #0284c7;
     }
 
     /* 4-QUADRANT MAIN GRID */
@@ -160,6 +184,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      position: relative;
     }
 
     .panel-header {
@@ -198,6 +223,28 @@
       border: 1px solid #334155;
     }
 
+    .badge-stream {
+      font-size: 0.68rem;
+      padding: 3px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #94a3b8;
+    }
+
+    .badge-stream.live {
+      border-color: #10b981;
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.15);
+    }
+
+    .badge-stream.connecting {
+      border-color: #f59e0b;
+      color: #fbbf24;
+      background: rgba(245, 158, 11, 0.15);
+    }
+
     .panel-body {
       flex-grow: 1;
       position: relative;
@@ -208,6 +255,73 @@
       width: 100%;
       height: 100%;
       border: none;
+    }
+
+    /* AIS MAP OVERLAY SHORTCUT BUTTONS (LOWER RIGHT CORNER) */
+    .ais-overlay-stack {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      z-index: 20;
+    }
+
+    .btn-overlay {
+      padding: 8px 14px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65);
+      transition: all 0.15s ease-in-out;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-overlay:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Red Soo Locks Button */
+    .btn-overlay-locks {
+      background-color: #b91c1c;
+      color: #ffffff;
+      border: 2px solid #ef4444;
+    }
+    .btn-overlay-locks:hover {
+      background-color: #dc2626;
+      border-color: #f87171;
+    }
+
+    /* Purple Boat Basin Button */
+    .btn-overlay-basin {
+      background-color: #7e22ce;
+      color: #ffffff;
+      border: 2px solid #a855f7;
+    }
+    .btn-overlay-basin:hover {
+      background-color: #9333ea;
+      border-color: #c084fc;
+    }
+
+    /* Yellow Lower Dam Button */
+    .btn-overlay-dam {
+      background-color: #ca8a04;
+      color: #0f172a;
+      border: 2px solid #eab308;
+    }
+    .btn-overlay-dam:hover {
+      background-color: #eab308;
+      border-color: #facc15;
+      color: #000000;
     }
 
     /* BOTTOM LEFT: NOAA GAUGES STRIP + WIDESCREEN YOUTUBE CAM + USCG D9 */
@@ -311,21 +425,6 @@
       min-height: 0;
     }
 
-    .cam-fallback-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(15,23,42,0.85) 0%, rgba(15,23,42,0.95) 100%),
-                  url('https://i.ytimg.com/vi/TkY4BzCikQ4/hqdefault.jpg') center/cover no-repeat;
-      display: none;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 10px;
-      gap: 6px;
-      z-index: 5;
-    }
-
     /* RIGHT COLUMN: USCG DISTRICT 9 NOTICES */
     .uscg-card {
       background: #0f172a;
@@ -405,7 +504,7 @@
       min-height: 44px;
     }
 
-    /* BOTTOM RIGHT: ZERO-SCROLL 2-COLUMN FLOATING PLANT GRID */
+    /* BOTTOM RIGHT: ZERO-SCROLL 2-COLUMN FLOATING PLANT GRID (14 SLOTS) */
     .plant-container {
       padding: 6px 8px;
       display: flex;
@@ -429,9 +528,9 @@
       background: #0f172a;
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      padding: 3px 6px;
+      padding: 3px 8px;
       display: grid;
-      grid-template-columns: 1.15fr auto auto 1.25fr;
+      grid-template-columns: 1.35fr auto auto 1.3fr;
       align-items: center;
       gap: 5px;
       min-height: 0;
@@ -447,16 +546,30 @@
       flex-direction: column;
       justify-content: center;
       min-width: 0;
+      cursor: pointer;
     }
 
-    .vessel-name {
+    .vessel-name-btn {
+      background: transparent;
+      border: none;
+      text-align: left;
       font-weight: 700;
-      font-size: 0.76rem;
-      color: #f8fafc;
+      font-size: 0.8rem;
+      color: #38bdf8;
+      cursor: pointer;
+      padding: 0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .vessel-name-btn:hover {
+      color: #7dd3fc;
+      text-decoration: underline;
     }
 
     .vessel-type {
@@ -466,24 +579,31 @@
       overflow: hidden;
       text-overflow: ellipsis;
       line-height: 1.1;
+      margin-top: 1px;
     }
 
-    .mmsi-btn {
-      background: #1e293b;
-      color: var(--accent-blue);
-      border: 1px solid #0284c7;
-      padding: 2px 5px;
-      border-radius: 4px;
-      font-family: Consolas, monospace;
-      font-size: 0.68rem;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
+    /* MOTION STATE ICONS (ANCHOR VS UNDERWAY) */
+    .motion-icon {
+      font-size: 0.85rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
     }
 
-    .mmsi-btn:hover {
-      background: #0284c7;
-      color: white;
+    .motion-moored {
+      color: #94a3b8;
+    }
+
+    .motion-underway {
+      color: #22c55e;
+      animation: pulseMotion 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseMotion {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.75; transform: scale(1.15); }
     }
 
     .status-pill {
@@ -502,6 +622,7 @@
     .status-PMC { background-color: rgba(245, 158, 11, 0.2); color: var(--pmc-amber); border: 1px solid var(--pmc-amber); }
     .status-NMC { background-color: rgba(239, 68, 68, 0.2); color: var(--nmc-red); border: 1px solid var(--nmc-red); }
 
+    /* LOCATION COLOR CODING (REVISED) */
     .location-wrapper {
       position: relative;
       display: flex;
@@ -509,29 +630,69 @@
       min-width: 0;
     }
 
-    .location-select {
-      background: #1e293b;
-      border: 1px solid #334155;
-      color: var(--text-main);
+    .location-badge {
       width: 100%;
-      padding: 2px 4px;
-      font-size: 0.7rem;
+      padding: 3px 6px;
+      font-size: 0.68rem;
+      font-weight: 700;
       border-radius: 4px;
-      min-width: 0;
-      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+      user-select: none;
+      transition: all 0.2s;
     }
 
-    .location-select:focus {
-      outline: none;
-      border-color: var(--accent-blue);
-      background: #0f172a;
+    /* Purple for Boat Basin */
+    .loc-boat-basin {
+      color: #e9d5ff;
+      border: 1px solid #a855f7;
+      background-color: rgba(168, 85, 247, 0.22);
     }
 
-    .location-select.in-basin {
-      color: #d8b4fe;
-      border-color: #9333ea;
-      background-color: rgba(147, 51, 234, 0.15);
-      font-weight: 600;
+    /* Yellow for Lower Dam */
+    .loc-lower-dam {
+      color: #fef08a;
+      border: 1px solid #eab308;
+      background-color: rgba(234, 179, 8, 0.22);
+    }
+
+    /* White / Neutral for all other locations */
+    .loc-neutral {
+      color: #ffffff;
+      border: 1px solid #475569;
+      background-color: #1e293b;
+    }
+
+    /* 14th SLOT LEGEND CARD (REVISED) */
+    .legend-card {
+      background: #090e1a;
+      border: 1px dashed #475569;
+      border-radius: 6px;
+      padding: 3px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 6px;
+      min-height: 0;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .legend-tag {
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 0.62rem;
+      font-weight: 800;
+      line-height: 1.1;
     }
 
     .notes-bar {
@@ -563,9 +724,9 @@
       </div>
     </div>
     <div class="header-controls">
-      <button class="btn btn-basin" onclick="panToBoatBasin()" title="Focus AIS Map on Boat Basin (46°30'05.12N, 84°20'27.27W)">📍 Boat Basin</button>
-      <button class="btn" onclick="resetAisToLocks()" title="Reset AIS Map to Soo Locks (3,000 ft view)">🗺️ Soo Locks (~3,000 ft)</button>
-      <button class="btn" onclick="refreshAllFrames()">↻ Refresh All</button>
+      <button class="btn btn-fs" id="btnFullscreen" onclick="toggleDashboardFullscreen()" title="Tap to enter or exit full-screen kiosk display">⛶ Fullscreen</button>
+      <button class="btn btn-refresh-all" onclick="refreshAllFrames()" title="Synchronize AIS map, river cam, weather radar, NOAA gauges, and fleet locations">↻ Refresh All</button>
+      <div class="version-tag" id="appVersion">v2.0</div>
       <div class="clock-box">
         <div class="clock-time" id="localClock">00:00:00</div>
         <div class="clock-date" id="localDate">Loading Date...</div>
@@ -576,7 +737,7 @@
   <!-- 4-QUADRANT MAIN GRID -->
   <div class="grid-container">
 
-    <!-- QUADRANT 1: LIVE AIS MAP (TOP-LEFT) - DEFAULT ZOOM TO ~3,000 FT -->
+    <!-- QUADRANT 1: LIVE AIS MAP (TOP-LEFT) WITH LOWER-RIGHT OVERLAY ACTION STACK -->
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">
@@ -590,6 +751,19 @@
       </div>
       <div class="panel-body">
         <iframe id="aisFrame" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+
+        <!-- OVERLAY SHORTCUT BUTTONS ON LOWER-RIGHT OF AIS MAP -->
+        <div class="ais-overlay-stack">
+          <button class="btn-overlay btn-overlay-locks" onclick="resetAisToLocks()" title="Center AIS map on Soo Locks (~3,000 ft view)">
+            🔴 Soo Locks
+          </button>
+          <button class="btn-overlay btn-overlay-basin" onclick="panToBoatBasin()" title="Center AIS map on Boat Basin">
+            🟣 Boat Basin
+          </button>
+          <button class="btn-overlay btn-overlay-dam" onclick="panToLowerDam()" title="Center AIS map on Lower Dam (East of Rock Cut)">
+            🟡 Lower Dam
+          </button>
+        </div>
       </div>
     </div>
 
@@ -620,8 +794,7 @@
       <div class="panel-header">
         <div class="panel-title">🌊 NOAA River Gauges, 📹 Live River Cam & 🚨 USCG D9 Notices</div>
         <div class="panel-actions">
-          <button class="btn btn-cam" onclick="launchDockedPiPCam()" title="Bypasses Error 153 on local desktop files">📺 Launch Docked Cam (Fixes Error 153)</button>
-          <button class="btn" onclick="fetchNoaaData()">↻ Gauges</button>
+          <span style="font-size: 0.65rem; color: var(--text-muted);">Syncs with Refresh All</span>
         </div>
       </div>
       <div class="panel-body">
@@ -666,9 +839,7 @@
                   <span class="live-dot"></span> Live Soo Locks / River Video Stream
                 </div>
                 <div style="display: flex; gap: 4px; align-items: center;">
-                  <span style="font-size: 0.62rem; color: var(--text-muted); margin-right: 4px;" id="camIdLabel">ID: TkY4BzCikQ4</span>
-                  <button class="btn" style="padding: 2px 6px; font-size: 0.64rem;" onclick="toggleLocalFileHelper()" title="Seeing Error 153? Click here">⚠️ Error 153 Help</button>
-                  <button class="btn" style="padding: 2px 6px; font-size: 0.64rem;" onclick="reloadCamFrame()">↻</button>
+                  <span style="font-size: 0.62rem; color: var(--text-muted); margin-right: 4px;">ID: TkY4BzCikQ4</span>
                 </div>
               </div>
 
@@ -679,22 +850,6 @@
                   referrerpolicy="strict-origin-when-cross-origin"
                   allowfullscreen>
                 </iframe>
-
-                <!-- Interactive Overlay for Local Desktop File (file://) Error 153 Bypass -->
-                <div class="cam-fallback-overlay" id="camFallbackOverlay">
-                  <div style="font-size: 0.82rem; font-weight: 700; color: #f8fafc;">
-                    Seeing YouTube "Error 153"?
-                  </div>
-                  <div style="font-size: 0.68rem; color: #cbd5e1; line-height: 1.3; max-width: 90%;">
-                    YouTube blocks embeds opened from a local <code>file:///</code> path because no HTTP Referer header is sent by Windows.
-                  </div>
-                  <button class="btn btn-cam" style="padding: 5px 12px; font-size: 0.74rem;" onclick="launchDockedPiPCam()">
-                    📺 Open Docked Cam Window (Click PiP Icon)
-                  </button>
-                  <button class="btn" style="padding: 2px 8px; font-size: 0.65rem;" onclick="toggleLocalFileHelper()">
-                    Hide Message
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -736,18 +891,16 @@
       </div>
     </div>
 
-    <!-- QUADRANT 4: ST. MARYS RIVER FLOATING PLANT FLEET (2-COLUMN ZERO-SCROLL VIEW) -->
+    <!-- QUADRANT 4: ST. MARYS RIVER FLOATING PLANT FLEET (2-COLUMN ZERO-SCROLL VIEW WITH 14TH SLOT LEGEND) -->
     <div class="panel">
       <div class="panel-header">
-        <div class="panel-title">⚓ St. Marys River Fleet (Tap MMSI to Track | Tap Status to Cycle | Select Location)</div>
+        <div class="panel-title">⚓ St. Marys River Fleet (Tap Vessel to Track | Tap Status to Cycle FMC/PMC/NMC)</div>
         <div class="panel-actions">
-          <button class="btn" onclick="syncAisCoordinates()" title="Poll live coordinates and auto-detect Boat Basin presence">🛰️ Poll Live AIS</button>
-          <button class="btn" onclick="resetPlantBoard()">Reset Fleet</button>
+          <span class="badge-stream" id="aisStreamBadge">AIS: Standby</span>
         </div>
       </div>
       <div class="panel-body">
         <div class="plant-container">
-          <!-- 2-Column Grid displaying all 13 vessels without scrolling -->
           <div class="fleet-two-col-grid" id="plantGridBody">
             <!-- Populated dynamically by JavaScript -->
           </div>
@@ -764,37 +917,444 @@
 
   <script>
     // =========================================================================
-    // 0. BOAT BASIN & GEOGRAPHIC DEFINITIONS
-    // Coordinates: 46°30'05.12"N, 84°20'27.27"W -> 46.501422, -84.340908
+    // 0. FULLSCREEN KIOSK ENGINE (Interactive Display & SMART Board Touch Safe)
     // =========================================================================
-    const BOAT_BASIN = {
-      name: "Boat Basin",
-      lat: 46.501422,
-      lon: -84.340908,
-      radiusMeters: 200 // geofence radius covering the inlet and docks
-    };
+    const CURRENT_DASHBOARD_VERSION = "v2.0";
 
+    function isCurrentlyFullscreen() {
+      return !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+    }
+
+    function toggleDashboardFullscreen() {
+      const docEl = document.documentElement;
+      if (!isCurrentlyFullscreen()) {
+        const requestMethod = docEl.requestFullscreen ||
+                              docEl.webkitRequestFullscreen ||
+                              docEl.mozRequestFullScreen ||
+                              docEl.msRequestFullscreen;
+
+        if (requestMethod) {
+          requestMethod.call(docEl).catch(err => {
+            console.warn("Fullscreen request error:", err);
+            alert("SMART Board note: Press F11 or configure Chrome with '--kiosk' if full-screen toggle is intercepted.");
+          });
+        }
+      } else {
+        const exitMethod = document.exitFullscreen ||
+                           document.webkitExitFullscreen ||
+                           document.mozCancelFullScreen ||
+                           document.msExitFullscreen;
+
+        if (exitMethod) {
+          exitMethod.call(document).catch(err => console.warn("Exit fullscreen error:", err));
+        }
+      }
+    }
+
+    function updateFullscreenButtonState() {
+      const fsBtn = document.getElementById('btnFullscreen');
+      if (isCurrentlyFullscreen()) {
+        fsBtn.textContent = '🗗 Exit Fullscreen';
+        fsBtn.classList.add('btn-active');
+      } else {
+        fsBtn.textContent = '⛶ Fullscreen';
+        fsBtn.classList.remove('btn-active');
+      }
+    }
+
+    document.addEventListener('fullscreenchange', updateFullscreenButtonState);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenButtonState);
+    document.addEventListener('mozfullscreenchange', updateFullscreenButtonState);
+    document.addEventListener('MSFullscreenChange', updateFullscreenButtonState);
+
+    // =========================================================================
+    // 1. HARDCODED NUMERIC KML POLYGONS & RECTIFIED GEOFENCE RESOLUTION ENGINE
+    // =========================================================================
     const SOO_LOCKS_CENTER = {
-      name: "Soo Locks (~3,000 ft View)",
+      name: "Soo Locks",
       lat: 46.5015,
       lon: -84.3465,
       zoom: 15
     };
 
-    // Haversine formula to compute distance in meters
-    function getDistanceMeters(lat1, lon1, lat2, lon2) {
-      const R = 6371000;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
+    // Stored as [lat, lon] floating-point numbers directly from Dashboard.txt
+    const KML_POLYGONS = [
+      {
+        name: "Boat Basin",
+        priority: 1,
+        coords: [
+          [46.50238197636229, -84.34214558694396],
+          [46.50115675511453, -84.34313362228133],
+          [46.50032738013422, -84.34022466953547],
+          [46.50054184066926, -84.33956554512797],
+          [46.50101106555343, -84.33907015773342],
+          [46.50112262779198, -84.33877322226006],
+          [46.50179664791388, -84.33856133166223],
+          [46.50238197636229, -84.34214558694396]
+        ]
+      },
+      {
+        name: "Lower Dam",
+        priority: 1,
+        coords: [
+          [46.26174569779952, -84.19198256164985],
+          [46.26421329457152, -84.1857121743701],
+          [46.26895955466745, -84.188847929863],
+          [46.26536797422763, -84.19503640447098],
+          [46.26174569779952, -84.19198256164985]
+        ]
+      },
+      {
+        name: "Holmstead",
+        priority: 1,
+        coords: [
+          [46.33564076711437, -84.12057174817924],
+          [46.33365445665286, -84.11881454383624],
+          [46.33505199897462, -84.11617727951189],
+          [46.33699098916772, -84.11821056333784],
+          [46.33564076711437, -84.12057174817924]
+        ]
+      },
+      {
+        name: "Slab Dock",
+        priority: 1,
+        coords: [
+          [46.24882854764473, -84.11084881657229],
+ [46.24499785345862, -84.10688582756953],
+          [46.24728523837533, -84.10425573755919],
+          [46.2507730468595, -84.10826189774069],
+          [46.24882854764473, -84.11084881657229]
+        ]
+      },
+      {
+        name: "Lock Chamber",
+        priority: 2,
+        coords: [
+          [46.50342276864514, -84.35503983602777],
+          [46.50262185716084, -84.3547855693472],
+          [46.5025724967013, -84.35278940727147],
+          [46.50122174900059, -84.3521789690936],
+          [46.50160290053618, -84.34885788868701], [46.50276546013386, -84.34887345399252],
+          [46.50289333588828, -84.34934554110109],
+          [46.50460358080307, -84.34963880645857], [46.50443009106375, -84.35517086208266],
+          [46.50342276864514, -84.35503983602777]
+        ]
+      },
+      {
+        name: "Rock Cut",
+        priority: 2,
+        coords: [
+          [46.26479958623257, -84.19619160816799],
+          [46.26904953775422, -84.18896430266953],
+          [46.28891960991475, -84.21020198394521],
+          [46.28571779662974, -84.2154540291572],
+          [46.26479958623257, -84.19619160816799]
+        ]
+      },
+      {
+        name: "East Approach",
+        priority: 3,
+        coords: [
+          [46.50188402614108, -84.34259386442011],
+          [46.50241256409322, -84.34215793998857],
+          [46.50198676037759, -84.33964743754881],
+          [46.50753642766657, -84.33486109907324],
+          [46.51586096312606, -84.34088346518044],
+          [46.51646369070198, -84.35360779252368],
+          [46.51242394254221, -84.35227506448602],
+          [46.50595377347685, -84.34925416576411],
+          [46.50584832761452, -84.34985544924896],
+          [46.50466654157417, -84.34957894769768],
+          [46.50460436465614, -84.34957352441688],
+          [46.50291405537234, -84.34930089311557],
+          [46.50275992973909, -84.34884499784073],
+          [46.50159361617078, -84.34881561493161],
+          [46.50188402614108, -84.34259386442011]
+        ]
+      },
+      {
+        name: "West Approach",
+        priority: 3,
+        coords: [
+          [46.50296154977235, -84.4023948242468],
+          [46.49114849566179, -84.39370493657638],
+          [46.5008549302076, -84.35423805340655],
+          [46.50120468436894, -84.35227442218863],
+          [46.50253978108293, -84.35280942739139],
+          [46.50259485790011, -84.35483115878033],
+          [46.51098433688264, -84.35764988722967],
+          [46.51215669735508, -84.35297398210834],
+          [46.51841492734196, -84.35516378562028],
+          [46.52076486891514, -84.37116621048087],
+          [46.52025958550052, -84.38428882053145],
+          [46.50296154977235, -84.4023948242468]
+        ]
+      },
+      {
+        name: "St Marys East",
+        priority: 4,
+        coords: [
+          [46.49920789990546, -84.3410716162919], [46.48677237479293, -84.30544852473864],
+          [46.49168439204463, -84.29324622915287],
+          [46.50424175559643, -84.30907677905491],
+          [46.50774094071419, -84.33456487903865],
+          [46.5019916850366, -84.33960715248277],
+          [46.50180429453462, -84.33851158572448],
+          [46.5010964083311, -84.33871959612762],
+          [46.50098020957073, -84.33904330146055],
+          [46.5005346520263, -84.33947934862989],
+          [46.500521083382, -84.33949668470009],
+          [46.49920789990546, -84.3410716162919]
+        ]
+      },
+      {
+        name: "St Marys West",
+        priority: 4,
+        coords: [
+          [46.48819835392458, -84.39214449611951],
+ [46.504053081629, -84.40398504713255],
+          [46.52147483185529, -84.41459405945723],
+          [46.50486420013269, -84.48878114809985],
+          [46.51235023259917, -84.53684869437484],
+          [46.43160466034789, -84.616423847438],
+          [46.3972766305191, -84.52840346392948],
+          [46.48819835392458, -84.39214449611951]
+        ]
+      },
+      {
+        name: "Sugar Island East",
+        priority: 5,
+        coords: [
+          [46.48641012490013, -84.30552837972743],
+          [46.46836322882273, -84.30454966217449], [46.45992843527194, -84.28819352616775],
+          [46.33257224917644, -84.22946122640019],
+          [46.32546949927995, -84.14859854639492],
+ [46.36784658151392, -84.16103298383544],
+          [46.44230388061651, -84.22757911062349],
+          [46.49338032957734, -84.22419598835886],
+ [46.5132991461564, -84.25673377877682],
+          [46.48641012490013, -84.30552837972743]
+        ]
+      },
+      {
+        name: "Sugar Island West",
+        priority: 5,
+        coords: [
+          [46.49381144529006, -84.215236132399],
+          [46.44271000681333, -84.21981994135021],
+          [46.36990025851819, -84.15770683532152],
+          [46.32501363546624, -84.14590861699334],
+          [46.31518582643893, -84.12536207630771],
+          [46.3244473093899, -84.09054485029024],
+          [46.34275521800191, -84.10154447966354],
+          [46.33351369059866, -84.1190204807591],
+          [46.33556894827522, -84.12114767994159],
+          [46.33733968269577, -84.11835117550346],
+          [46.33544466995724, -84.11591166910409],
+          [46.34699969648053, -84.09515196731103],
+          [46.35327885009765, -84.07870970835008],
+          [46.41342018194241, -84.11851625349559],
+          [46.48396143290849, -84.07054576217909],
+          [46.53597378576333, -84.13268968857203],
+          [46.53783032455342, -84.16700142681852],
+          [46.49381144529006, -84.215236132399]
+        ]
+      },
+      {
+        name: "Neebish Island",
+        priority: 5,
+        coords: [
+          [46.3263040977802, -84.16857497810767],
+          [46.3319943811147, -84.22932580486108],
+          [46.28207950918444, -84.22579996650516], [46.28496992202869, -84.21655859555204],
+          [46.28932089376589, -84.21021870289286],
+          [46.26906380567062, -84.18866083298481],
+ [46.26400904376656, -84.18496882334621],
+          [46.26098693878905, -84.19208735900276],
+          [46.25344339854531, -84.187563928424],
+          [46.24859284986211, -84.18286379163936],
+          [46.24675191822081, -84.1906793992049],
+          [46.24686570706122, -84.2120876958904],
+          [46.23350530153131, -84.21576963962154],
+          [46.21295137477245, -84.23790276553889],
+          [46.16154830345334, -84.22846330437383],
+          [46.16535905765848, -84.15283312050448],
+          [46.15389985588033, -84.10852760491072],
+          [46.18905804172929, -84.03839733849333],
+          [46.20952045442368, -84.06433848208427],
+          [46.23205185539521, -84.08270753336635],
+          [46.23263555018851, -84.09524833383097],
+          [46.23954436717666, -84.10367534070411],
+          [46.24444954839638, -84.10632606213962],
+          [46.24907458520188, -84.11095384586821],
+          [46.25106158296295, -84.10808362028804],
+          [46.24775712164677, -84.10419447332461], [46.2449886484472, -84.10643205536024],
+          [46.24011439714796, -84.10299915765719],
+          [46.24714551631786, -84.09653628735192],
+          [46.26353194058051, -84.08811180882806],
+          [46.31841448651281, -84.10762535237572],
+          [46.31372179783694, -84.12493440071951],
+          [46.32405923889836, -84.14709751306147],
+          [46.3263040977802, -84.16857497810767]
+        ]
+      },
+      {
+        name: "Detour",
+        priority: 5,
+        coords: [
+          [46.18672674620093, -84.03511760699142],
+          [46.15193731717188, -84.10673495282788],
+          [45.96729679152745, -84.06513118357027],
+          [45.9474376064668, -83.7977757579223],
+          [46.08290593044903, -83.86282730867086],
+          [46.18672674620093, -84.03511760699142]
+        ]
+      },
+      {
+        name: "Mackinaw Straights",
+        priority: 6,
+        coords: [
+          [45.73975806376687, -84.89947193409013],
+          [45.70510692574367, -84.58511878499287],
+          [45.92313418722936, -84.56279889598238],
+          [45.9503257265467, -84.89484590302179],
+          [45.73975806376687, -84.89947193409013]
+        ]
+      },
+      {
+        name: "Whitefish Bay",
+        priority: 6,
+        coords: [
+          [46.63640330164755, -85.05157095699286],
+          [46.47736177620452, -85.05703527787004],
+          [46.4395104357635, -84.82768834824277],
+          [46.45287617414758, -84.59250264503308],
+          [46.7129321654495, -84.36562111008047],
+ [46.94284590627019, -84.47305535972288],
+          [46.78696645760945, -84.98210486641898],
+          [46.63640330164755, -85.05157095699286]
+        ]
+      },
+      {
+        name: "Lake Huron",
+        priority: 7,
+        coords: [
+          [45.69068941377952, -84.57906512627072],
+          [45.30207080998667, -83.44012457832177],
+          [45.92153632922324, -83.48850305509379],
+          [45.96499023784975, -84.07387194875606],
+          [45.99197827083518, -84.53912515684598],
+          [45.92499784556291, -84.56022647433275],
+          [45.69068941377952, -84.57906512627072]
+        ]
+      },
+      {
+        name: "Lake Superior",
+        priority: 7,
+        coords: [
+          [48.29995481326721, -84.61764271930238],
+          [48.496394896617, -86.30554216059541],
+ [47.62994523347085, -87.68232253632409],
+          [47.30996410569848, -87.99709081873186],
+          [46.72453858845436, -88.53108885084724],
+ [46.86648577690079, -88.02398585124052],
+          [46.52988565173695, -87.4580226848331],
+          [46.38096314232588, -86.70442454718538],
+          [46.72522981785652, -85.14746056403419],
+          [46.94737545933553, -84.48959550018941],
+          [48.29995481326721, -84.61764271930238]
+        ]
+      }
+    ];
+
+    // Standard PNPOLY Ray-Casting algorithm: lat = y, lon = x
+    function isPointInPolygon(testLat, testLon, polygon) {
+      let inside = false;
+      const n = polygon.length;
+      for (let i = 0, j = n - 1; i < n; j = i++) {
+        const latI = polygon[i][0], lonI = polygon[i];
+        const latJ = polygon[j][0], lonJ = polygon[j];
+
+        const intersects = ((latI > testLat) !== (latJ > testLat)) &&
+          (testLon < (lonJ - lonI) * (testLat - latI) / (latJ - latI) + lonI);
+
+        if (intersects) inside = !inside;
+      }
+      return inside;
+    }
+
+    // Distance from a point to a line segment in meters with latitude aspect-ratio compensation
+    function distToSegmentMeters(plat, plon, lat1, lon1, lat2, lon2) {
+      const cosLat = Math.cos(plat * Math.PI / 180);
+      const px = plon * cosLat * 111320;
+      const py = plat * 110540;
+      const x1 = lon1 * cosLat * 111320;
+      const y1 = lat1 * 110540;
+      const x2 = lon2 * cosLat * 111320;
+      const y2 = lat2 * 110540;
+
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const l2 = dx * dx + dy * dy;
+      if (l2 === 0) return Math.hypot(px - x1, py - y1);
+      let t = ((px - x1) * dx + (py - y1) * dy) / l2;
+      t = Math.max(0, Math.min(1, t));
+      return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+    }
+
+    // Distance from point to polygon perimeter in meters
+    function distToPolygonPerimeter(lat, lon, polygon) {
+      let minDist = Infinity;
+      const n = polygon.length;
+      for (let i = 0, j = n - 1; i < n; j = i++) {
+        const d = distToSegmentMeters(lat, lon, polygon[j][0], polygon[j], polygon[i][0], polygon[i]);
+        if (d < minDist) minDist = d;
+      }
+      return minDist;
+    }
+
+    // Resolve location: Strict priority check first, then closest perimeter fallback
+    function resolveKmlGeofence(lat, lon) {
+      if (typeof lat !== 'number' || typeof lon !== 'number' || isNaN(lat) || isNaN(lon)) {
+        return "Unknown";
+      }
+
+      for (const poly of KML_POLYGONS) {
+        if (isPointInPolygon(lat, lon, poly.coords)) {
+          return poly.name;
+        }
+      }
+
+      let closestPoly = "Unknown";
+      let minDistance = Infinity;
+
+      for (const poly of KML_POLYGONS) {
+        const dist = distToPolygonPerimeter(lat, lon, poly.coords);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closestPoly = poly.name;
+        }
+      }
+      return closestPoly;
+    }
+
+    // Color logic:
+    // Purple = Boat Basin
+    // Yellow = Lower Dam
+    // White  = All other locations
+    function getLocationColorClass(locationName) {
+      if (locationName === "Boat Basin") return "loc-boat-basin";
+      if (locationName === "Lower Dam") return "loc-lower-dam";
+      return "loc-neutral";
     }
 
     // =========================================================================
-    // 1. LIVE CLOCK (Local + UTC)
+    // 2. LIVE CLOCK (Local + UTC)
     // =========================================================================
     function updateClock() {
       const now = new Date();
@@ -810,7 +1370,7 @@
     updateClock();
 
     // =========================================================================
-    // 2. YOUTUBE LIVE CAM ENGINE (Strict-origin + Docked PiP fallback)
+    // 3. YOUTUBE LIVE CAM ENGINE (Strict-origin + Header expand toggle)
     // =========================================================================
     const currentCamId = 'TkY4BzCikQ4';
     let topRightShowingCam = false;
@@ -826,7 +1386,6 @@
       const camFrame = document.getElementById('youtubeCamFrame');
       camFrame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
       camFrame.src = getYoutubeEmbedUrl(currentCamId);
-      document.getElementById('camIdLabel').textContent = `ID: ${currentCamId}`;
     }
 
     function reloadCamFrame() {
@@ -836,25 +1395,6 @@
         wf.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
         wf.src = getYoutubeEmbedUrl(currentCamId);
       }
-    }
-
-    function toggleLocalFileHelper() {
-      const overlay = document.getElementById('camFallbackOverlay');
-      overlay.style.display = (overlay.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function launchDockedPiPCam() {
-      const box = document.getElementById('camCardBox').getBoundingClientRect();
-      const width = Math.max(480, Math.round(box.width));
-      const height = Math.max(300, Math.round(box.height + 60));
-      const left = Math.round(window.screenX + box.left);
-      const top = Math.round(window.screenY + box.top);
-
-      window.open(
-        `https://www.youtube.com/watch?v=${currentCamId}`,
-        'StMarysDockedCam',
-        `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no`
-      );
     }
 
     function toggleTopRightCam() {
@@ -877,7 +1417,7 @@
     renderCamFrame();
 
     // =========================================================================
-    // 3. AIS MAP ENGINE (Zoom Level 15 / ~3,000 ft view, Vessel Tracking & Boat Basin)
+    // 4. AIS MAP ENGINE & LOWER-RIGHT OVERLAY SHORTCUT CONTROLS
     // =========================================================================
     let currentAisProvider = 'vesselfinder';
     let trackedMmsi = null;
@@ -952,6 +1492,11 @@
 
     function switchAisProvider(provider) {
       currentAisProvider = provider;
+      trackedMmsi = null;
+      customCenter = null;
+      trackedName = SOO_LOCKS_CENTER.name;
+      aisSeconds = 900;
+
       document.getElementById('btnVf').classList.toggle('btn-active', provider === 'vesselfinder');
       document.getElementById('btnMt').classList.toggle('btn-active', provider === 'marinetraffic');
       renderAisMap();
@@ -965,27 +1510,41 @@
       renderAisMap();
     }
 
+    // OVERLAY BUTTON 1: Soo Locks (Red)
+    function resetAisToLocks() {
+      trackedMmsi = null;
+      customCenter = null;
+      trackedName = "Soo Locks";
+      aisSeconds = 900;
+      renderAisMap();
+    }
+
+    // OVERLAY BUTTON 2: Boat Basin (Purple)
     function panToBoatBasin() {
       trackedMmsi = null;
       customCenter = {
-        name: "Boat Basin Inlet / Docks",
-        lat: BOAT_BASIN.lat,
-        lon: BOAT_BASIN.lon,
+        name: "Boat Basin",
+        lat: 46.501422,
+        lon: -84.340908,
         zoom: 16
       };
       aisSeconds = 900;
       renderAisMap();
     }
 
-    function resetAisToLocks() {
+    // OVERLAY BUTTON 3: Lower Dam (Yellow)
+    function panToLowerDam() {
       trackedMmsi = null;
-      customCenter = null;
-      trackedName = SOO_LOCKS_CENTER.name;
+      customCenter = {
+        name: "Lower Dam",
+        lat: 46.264297,
+        lon: -84.191675,
+        zoom: 16
+      };
       aisSeconds = 900;
       renderAisMap();
     }
 
-    // Auto-refresh AIS every 15 minutes so it never times out
     let aisSeconds = 900;
     setInterval(() => {
       aisSeconds--;
@@ -1006,14 +1565,14 @@
         windy.src = windy.src;
       }
       fetchNoaaData();
-      syncAisCoordinates();
+      renderFleet();
       aisSeconds = 900;
     }
 
     renderAisMap();
 
     // =========================================================================
-    // 4. SWITCH WINDY LAYER BY TOUCH
+    // 5. SWITCH WINDY LAYER BY TOUCH
     // =========================================================================
     function setWindyOverlay(overlay) {
       topRightShowingCam = false;
@@ -1027,7 +1586,7 @@
     }
 
     // =========================================================================
-    // 5. FETCH LIVE NOAA CO-OPS GAUGE DATA FOR ST. MARYS RIVER
+    // 6. FETCH LIVE NOAA CO-OPS GAUGE DATA FOR ST. MARYS RIVER
     // =========================================================================
     async function fetchNoaaData() {
       try {
@@ -1064,101 +1623,77 @@
     setInterval(fetchNoaaData, 300000);
 
     // =========================================================================
-    // 6. TWO-COLUMN FLOATING PLANT FLEET WITH GEOFENCING & QUICK LOCATION SELECT
+    // 7. TWO-COLUMN FLOATING PLANT FLEET (13 VESSELS + 14TH SLOT LEGEND)
     // =========================================================================
     const defaultFleet = [
-      { name: "NICOLET",    type: "Derrick Barge",   mmsi: "366999398", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3409 },
-      { name: "HARVEY",     type: "Crane Barge",     mmsi: "366999311", status: "FMC", location: "Boat Basin",       lat: 46.5013, lon: -84.3411 },
-      { name: "AQUADIGGER", type: "Excavator Barge", mmsi: "368926311", status: "FMC", location: "Boat Basin",       lat: 46.5015, lon: -84.3408 },
-      { name: "CHERAW",     type: "Tug",             mmsi: "366999428", status: "FMC", location: "Soo North Pier",   lat: 46.5030, lon: -84.3500 },
-      { name: "PEARCE",     type: "Tug",             mmsi: "338924169", status: "FMC", location: "Soo North Pier",   lat: 46.5029, lon: -84.3502 },
-      { name: "LAWSON",     type: "Tug",             mmsi: "338924170", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3409 },
-      { name: "DETROIT",    type: "Tug",             mmsi: "338925325", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3410 },
-      { name: "FREDERICK",  type: "Tug",             mmsi: "366999409", status: "FMC", location: "Soo Locks",        lat: 46.5018, lon: -84.3470 },
-      { name: "WHITEFISH",  type: "Tug",             mmsi: "366999314", status: "FMC", location: "Soo Locks",        lat: 46.5017, lon: -84.3468 },
-      { name: "BUFE",       type: "Survey Boat",     mmsi: "366999407", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3408 },
-      { name: "MACKIN",     type: "Survey Boat",     mmsi: "368389980", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3409 },
-      { name: "MUNSON",     type: "Launch Boat",     mmsi: "368926566", status: "FMC", location: "East Brady Pier",  lat: 46.4990, lon: -84.3350 },
-      { name: "SAFEBOAT",   type: "Launch Boat",     mmsi: "369970895", status: "FMC", location: "Boat Basin",       lat: 46.5014, lon: -84.3409 }
+      { name: "NICOLET",    type: "Derrick Barge",   mmsi: "366999398", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 },
+      { name: "HARVEY",     type: "Crane Barge",     mmsi: "366999311", status: "FMC", lat: 46.5013, lon: -84.3411, sog: 0.0 },
+      { name: "AQUADIGGER", type: "Excavator Barge", mmsi: "368926311", status: "FMC", lat: 46.5015, lon: -84.3408, sog: 0.0 },
+      { name: "CHERAW",     type: "Tug",             mmsi: "366999428", status: "FMC", lat: 46.5030, lon: -84.4500, sog: 6.2 },
+      { name: "PEARCE",     type: "Tug",             mmsi: "338924169", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 },
+      { name: "LAWSON",     type: "Tug",             mmsi: "338924170", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 },
+      { name: "DETROIT",    type: "Tug",             mmsi: "338925325", status: "FMC", lat: 46.5014, lon: -84.3410, sog: 0.0 },
+      { name: "FREDERICK",  type: "Tug",             mmsi: "366999409", status: "FMC", lat: 46.5028, lon: -84.3510, sog: 0.0 },
+      { name: "WHITEFISH",  type: "Tug",             mmsi: "366999314", status: "FMC", lat: 46.5030, lon: -84.3520, sog: 0.0 },
+      { name: "BUFE",       type: "Survey Boat",     mmsi: "366999407", status: "FMC", lat: 46.5014, lon: -84.3408, sog: 0.0 },
+      { name: "MACKIN",     type: "Survey Boat",     mmsi: "368389980", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 },
+      { name: "MUNSON",     type: "Launch Boat",     mmsi: "368926566", status: "FMC", lat: 46.5040, lon: -84.3450, sog: 0.0 },
+      { name: "SAFEBOAT",   type: "Launch Boat",     mmsi: "369970895", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 }
     ];
 
-    const STORAGE_KEY = 'usace_stmarys_fleet_v4';
+    const STORAGE_KEY = 'usace_stmarys_fleet_v14';
     let fleetData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultFleet;
-
-    const LOCATION_PRESETS = [
-      "Boat Basin",
-      "Soo North Pier",
-      "Soo South Pier",
-      "Soo Locks",
-      "East Brady Pier",
-      "St. Marys River",
-      "Underway"
-    ];
 
     function renderFleet() {
       const grid = document.getElementById('plantGridBody');
       grid.innerHTML = '';
 
       fleetData.forEach((unit, idx) => {
-        // Automatic geofencing verification
-        if (unit.lat && unit.lon) {
-          const dist = getDistanceMeters(unit.lat, unit.lon, BOAT_BASIN.lat, BOAT_BASIN.lon);
-          if (dist <= BOAT_BASIN.radiusMeters) {
-            unit.location = "Boat Basin";
-          }
-        }
+        const detectedLoc = resolveKmlGeofence(unit.lat, unit.lon);
+        unit.location = detectedLoc;
+        const colorClass = getLocationColorClass(detectedLoc);
+        
+        // Motion Icon: Anchor if moored (sog <= 0.5 kts), Waves if underway (sog > 0.5 kts)
+        const isUnderway = (unit.sog !== undefined && unit.sog > 0.5);
+        const motionIcon = isUnderway 
+          ? `<span class="motion-icon motion-underway" title="Underway (SOG: ${unit.sog || 0} kts)">🌊</span>`
+          : `<span class="motion-icon motion-moored" title="Moored / Stationary (SOG: ${unit.sog || 0} kts)">⚓</span>`;
 
-        const isBasin = unit.location === "Boat Basin";
         const card = document.createElement('div');
         card.className = 'vessel-card';
 
-        // Build location dropdown with standard presets and custom option
-        let optionsHtml = '';
-        let hasCustom = true;
-        LOCATION_PRESETS.forEach(preset => {
-          const sel = (unit.location === preset) ? 'selected' : '';
-          if (unit.location === preset) hasCustom = false;
-          optionsHtml += `<option value="${preset}" ${sel}>${preset === 'Boat Basin' ? '⚓ Boat Basin' : preset}</option>`;
-        });
-        if (hasCustom && unit.location) {
-          optionsHtml += `<option value="${unit.location}" selected>${unit.location}</option>`;
-        }
-        optionsHtml += `<option value="__custom__">✏️ Custom Berth...</option>`;
-
         card.innerHTML = `
-          <div class="vessel-info">
-            <div class="vessel-name">${unit.name}</div>
+          <div class="vessel-info" onclick="trackVesselMmsi('${unit.mmsi}', '${unit.name}')" title="Tap to track ${unit.name} on AIS">
+            <button class="vessel-name-btn">
+              <span>🎯</span> <span>${unit.name}</span>
+            </button>
             <div class="vessel-type">${unit.type}</div>
           </div>
-          <button class="mmsi-btn" onclick="trackVesselMmsi('${unit.mmsi}', '${unit.name}')" title="Tap to track ${unit.name} (${unit.mmsi})">
-            🎯 ${unit.mmsi}
-          </button>
+          ${motionIcon}
           <span class="status-pill status-${unit.status}" onclick="cycleStatus(${idx})" title="Tap to toggle FMC / PMC / NMC">${unit.status}</span>
           <div class="location-wrapper">
-            <select class="location-select ${isBasin ? 'in-basin' : ''}" onchange="handleLocationChange(${idx}, this)" title="Tap to change berth/location">
-              ${optionsHtml}
-            </select>
+            <div class="location-badge ${colorClass}" title="Location: ${detectedLoc} | SOG: ${unit.sog || 0} kts">
+              ${detectedLoc}
+            </div>
           </div>
         `;
         grid.appendChild(card);
       });
-    }
 
-    function handleLocationChange(idx, selectEl) {
-      if (selectEl.value === '__custom__') {
-        const customVal = prompt(`Enter custom berth/location for ${fleetData[idx].name}:`, fleetData[idx].location);
-        if (customVal && customVal.trim() !== '') {
-          fleetData[idx].location = customVal.trim();
-        }
-      } else {
-        fleetData[idx].location = selectEl.value;
-        if (selectEl.value === 'Boat Basin') {
-          fleetData[idx].lat = BOAT_BASIN.lat;
-          fleetData[idx].lon = BOAT_BASIN.lon;
-        }
-      }
-      saveFleet();
-      renderFleet();
+      // Render Revised 14th Slot Legend Card (Row 7, Column 2)
+      const legendSlot = document.createElement('div');
+      legendSlot.className = 'legend-card';
+      legendSlot.innerHTML = `
+        <div class="legend-item" title="Vessel is inside or closest to USACE Boat Basin">
+          <span class="legend-tag loc-boat-basin">BASIN</span>
+          <span style="color:#e9d5ff;">Boat Basin</span>
+        </div>
+        <div class="legend-item" title="Vessel is inside or closest to Lower Dam">
+          <span class="legend-tag loc-lower-dam">DAM</span>
+          <span style="color:#fef08a;">Lower Dam</span>
+        </div>
+      `;
+      grid.appendChild(legendSlot);
     }
 
     function cycleStatus(idx) {
@@ -1173,37 +1708,102 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(fleetData));
     }
 
-    function resetPlantBoard() {
-      fleetData = JSON.parse(JSON.stringify(defaultFleet));
-      saveFleet();
-      renderFleet();
+    // =========================================================================
+    // 8. AISSTREAM.IO LIVE WEBSOCKET TELEMETRY PIPELINE
+    // =========================================================================
+    // Replace with your API key from https://aisstream.io/account
+    const AISSTREAM_API_KEY = "0e07bfa1b46ab4734176c3fef5cc046b9e0e5bef";
+    let aisSocket = null;
+    let aisReconnectTimer = null;
+
+    function updateAisBadge(status, text) {
+      const badge = document.getElementById('aisStreamBadge');
+      badge.className = `badge-stream ${status}`;
+      badge.textContent = text;
     }
 
-    // Geofencing sync function: runs locally and re-validates positions against Boat Basin
-    function syncAisCoordinates() {
-      fleetData.forEach(unit => {
-        if (unit.lat && unit.lon) {
-          const dist = getDistanceMeters(unit.lat, unit.lon, BOAT_BASIN.lat, BOAT_BASIN.lon);
-          if (dist <= BOAT_BASIN.radiusMeters) {
-            unit.location = "Boat Basin";
+    function initAisStreamWebSocket() {
+      if (!AISSTREAM_API_KEY || AISSTREAM_API_KEY === "0e07bfa1b46ab4734176c3fef5cc046b9e0e5bef") {
+        updateAisBadge('', 'AIS: Standby');
+        return;
+      }
+
+      if (aisSocket) {
+        try { aisSocket.close(); } catch(e) {}
+      }
+
+      updateAisBadge('connecting', 'AIS: Connecting...');
+
+      try {
+        aisSocket = new WebSocket("wss://stream.aisstream.io/v0/stream");
+
+        aisSocket.onopen = function () {
+          updateAisBadge('live', 'AIS: Live Stream');
+
+          const subscriptionMessage = {
+            APIKey: AISSTREAM_API_KEY,
+            BoundingBoxes: [
+              [[45.5, -85.5], [47.2, -83.4]]
+            ],
+            FiltersShipMMSI: fleetData.map(v => v.mmsi),
+            FilterMessageTypes: ["PositionReport"]
+          };
+
+          aisSocket.send(JSON.stringify(subscriptionMessage));
+        };
+
+        aisSocket.onmessage = function (event) {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.MessageType === "PositionReport") {
+              const meta = data.MetaData || {};
+              const pos = (data.Message && data.Message.PositionReport) ? data.Message.PositionReport : {};
+              const mmsi = String(meta.MMSI || pos.UserID);
+              const lat = pos.Latitude;
+              const lon = pos.Longitude;
+              const sog = typeof pos.Sog === 'number' ? pos.Sog : 0.0;
+
+              const vessel = fleetData.find(v => v.mmsi === mmsi);
+              if (vessel && typeof lat === 'number' && typeof lon === 'number') {
+                vessel.lat = lat;
+                vessel.lon = lon;
+                vessel.sog = sog;
+                saveFleet();
+                renderFleet();
+              }
+            }
+          } catch (err) {
+            console.warn("AIS parse warning:", err);
           }
-        }
-      });
-      saveFleet();
-      renderFleet();
+        };
+
+        aisSocket.onerror = function () {
+          updateAisBadge('', 'AIS: Conn Error');
+        };
+
+        aisSocket.onclose = function () {
+          updateAisBadge('', 'AIS: Reconnecting in 10s');
+          clearTimeout(aisReconnectTimer);
+          aisReconnectTimer = setTimeout(initAisStreamWebSocket, 10000);
+        };
+      } catch (err) {
+        updateAisBadge('', 'AIS: Offline');
+      }
     }
 
-    // Daily Notes & USCG BNM Log persistence
+    initAisStreamWebSocket();
+
+    // Notes persistence
     const notesEl = document.getElementById('dailyNotes');
-    notesEl.value = localStorage.getItem('usace_stmarys_notes_v4') || "0700 Tailboard Brief | Verify cold-water PPE & VHF Ch. 12/14/16 comms with VTS St. Marys River.";
+    notesEl.value = localStorage.getItem('usace_stmarys_notes_v14') || "0700 Tailboard Brief | Verify cold-water PPE & VHF Ch. 12/14/16 comms with VTS St. Marys River.";
     notesEl.addEventListener('input', () => {
-      localStorage.setItem('usace_stmarys_notes_v4', notesEl.value);
+      localStorage.setItem('usace_stmarys_notes_v14', notesEl.value);
     });
 
     const bnmEl = document.getElementById('uscgBnmNotes');
-    bnmEl.value = localStorage.getItem('usace_stmarys_bnm_v4') || "• Monitor VTS Sault Ste. Marie Ch. 12 for downbound laker traffic.\n• Check weekly D9 LNM for St. Marys River buoy/light discrepancies.";
+    bnmEl.value = localStorage.getItem('usace_stmarys_bnm_v14') || "• Monitor VTS Sault Ste. Marie Ch. 12 for downbound laker traffic.\n• Check weekly D9 LNM for St. Marys River buoy/light discrepancies.";
     bnmEl.addEventListener('input', () => {
-      localStorage.setItem('usace_stmarys_bnm_v4', bnmEl.value);
+      localStorage.setItem('usace_stmarys_bnm_v14', bnmEl.value);
     });
 
     renderFleet();
