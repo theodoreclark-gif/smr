@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Strict origin referrer policy to prevent YouTube Error 153 -->
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <title>USACE St. Marys River Section | Common Operating Picture v2.0</title>
+  <title>USACE St. Marys River Section | Common Operating Picture v2.1</title>
   <style>
     :root {
       --usace-red: #c41230;
@@ -39,7 +38,6 @@
       flex-direction: column;
     }
 
-    /* TOP HEADER BAR */
     header {
       background: linear-gradient(90deg, #111827 0%, #1e293b 100%);
       border-bottom: 3px solid var(--usace-red);
@@ -166,7 +164,6 @@
       background-color: #0284c7;
     }
 
-    /* 4-QUADRANT MAIN GRID */
     .grid-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -257,7 +254,6 @@
       border: none;
     }
 
-    /* AIS MAP OVERLAY SHORTCUT BUTTONS (LOWER RIGHT CORNER) */
     .ais-overlay-stack {
       position: absolute;
       bottom: 12px;
@@ -290,7 +286,6 @@
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.85);
     }
 
-    /* Red Soo Locks Button */
     .btn-overlay-locks {
       background-color: #b91c1c;
       color: #ffffff;
@@ -301,7 +296,6 @@
       border-color: #f87171;
     }
 
-    /* Purple Boat Basin Button */
     .btn-overlay-basin {
       background-color: #7e22ce;
       color: #ffffff;
@@ -312,7 +306,6 @@
       border-color: #c084fc;
     }
 
-    /* Yellow Lower Dam Button */
     .btn-overlay-dam {
       background-color: #ca8a04;
       color: #0f172a;
@@ -324,7 +317,6 @@
       color: #000000;
     }
 
-    /* BOTTOM LEFT: NOAA GAUGES STRIP + WIDESCREEN YOUTUBE CAM + USCG D9 */
     .ops-split {
       display: grid;
       grid-template-columns: 2.15fr 1fr;
@@ -425,7 +417,6 @@
       min-height: 0;
     }
 
-    /* RIGHT COLUMN: USCG DISTRICT 9 NOTICES */
     .uscg-card {
       background: #0f172a;
       border: 1px solid var(--border-color);
@@ -504,7 +495,6 @@
       min-height: 44px;
     }
 
-    /* BOTTOM RIGHT: ZERO-SCROLL 2-COLUMN FLOATING PLANT GRID (14 SLOTS) */
     .plant-container {
       padding: 6px 8px;
       display: flex;
@@ -582,7 +572,6 @@
       margin-top: 1px;
     }
 
-    /* MOTION STATE ICONS (ANCHOR VS UNDERWAY) */
     .motion-icon {
       font-size: 0.85rem;
       line-height: 1;
@@ -622,7 +611,6 @@
     .status-PMC { background-color: rgba(245, 158, 11, 0.2); color: var(--pmc-amber); border: 1px solid var(--pmc-amber); }
     .status-NMC { background-color: rgba(239, 68, 68, 0.2); color: var(--nmc-red); border: 1px solid var(--nmc-red); }
 
-    /* LOCATION COLOR CODING (REVISED) */
     .location-wrapper {
       position: relative;
       display: flex;
@@ -644,28 +632,24 @@
       transition: all 0.2s;
     }
 
-    /* Purple for Boat Basin */
     .loc-boat-basin {
       color: #e9d5ff;
       border: 1px solid #a855f7;
       background-color: rgba(168, 85, 247, 0.22);
     }
 
-    /* Yellow for Lower Dam */
     .loc-lower-dam {
       color: #fef08a;
       border: 1px solid #eab308;
       background-color: rgba(234, 179, 8, 0.22);
     }
 
-    /* White / Neutral for all other locations */
     .loc-neutral {
       color: #ffffff;
       border: 1px solid #475569;
       background-color: #1e293b;
     }
 
-    /* 14th SLOT LEGEND CARD (REVISED) */
     .legend-card {
       background: #090e1a;
       border: 1px dashed #475569;
@@ -726,7 +710,7 @@
     <div class="header-controls">
       <button class="btn btn-fs" id="btnFullscreen" onclick="toggleDashboardFullscreen()" title="Tap to enter or exit full-screen kiosk display">⛶ Fullscreen</button>
       <button class="btn btn-refresh-all" onclick="refreshAllFrames()" title="Synchronize AIS map, river cam, weather radar, NOAA gauges, and fleet locations">↻ Refresh All</button>
-      <div class="version-tag" id="appVersion">v2.0</div>
+      <div class="version-tag" id="appVersion">v2.1</div>
       <div class="clock-box">
         <div class="clock-time" id="localClock">00:00:00</div>
         <div class="clock-date" id="localDate">Loading Date...</div>
@@ -800,9 +784,7 @@
       <div class="panel-body">
         <div class="ops-split">
 
-          <!-- Left Combined Card: 4 NOAA Gauges across top + Widescreen Cam below -->
           <div class="noaa-cam-combined-card">
-
             <div class="noaa-strip-header">
               <div style="font-weight: 700; font-size: 0.76rem; color: #38bdf8;">
                 🌊 NOAA CO-OPS Telemetry (IGLD 85 Datum)
@@ -812,7 +794,6 @@
               </div>
             </div>
 
-            <!-- 4 NOAA Gauges in One Top Horizontal Strip -->
             <div class="gauge-readout-strip">
               <div class="metric-box">
                 <div class="metric-label">SW Pier (#9099064)</div>
@@ -832,7 +813,6 @@
               </div>
             </div>
 
-            <!-- Expanded Rectangular Live Cam Stream -->
             <div class="cam-subpanel">
               <div class="cam-subpanel-header">
                 <div style="font-weight: 700; font-size: 0.74rem; color: #f8fafc; display: flex; align-items: center;">
@@ -852,10 +832,8 @@
                 </iframe>
               </div>
             </div>
-
           </div>
 
-          <!-- Right Subpanel: USCG District 9 Notices -->
           <div class="uscg-card">
             <div class="uscg-header">
               <div style="font-weight: 700; font-size: 0.78rem; color: #f8fafc;">
@@ -896,7 +874,7 @@
       <div class="panel-header">
         <div class="panel-title">⚓ St. Marys River Fleet (Tap Vessel to Track | Tap Status to Cycle FMC/PMC/NMC)</div>
         <div class="panel-actions">
-          <span class="badge-stream" id="aisStreamBadge">AIS: Standby</span>
+          <span class="badge-stream" id="aisStreamBadge">AIS: Initializing</span>
         </div>
       </div>
       <div class="panel-body">
@@ -919,7 +897,7 @@
     // =========================================================================
     // 0. FULLSCREEN KIOSK ENGINE (Interactive Display & SMART Board Touch Safe)
     // =========================================================================
-    const CURRENT_DASHBOARD_VERSION = "v2.0";
+    const CURRENT_DASHBOARD_VERSION = "v2.1";
 
     function isCurrentlyFullscreen() {
       return !!(
@@ -1025,7 +1003,7 @@
         priority: 1,
         coords: [
           [46.24882854764473, -84.11084881657229],
- [46.24499785345862, -84.10688582756953],
+          [46.24499785345862, -84.10688582756953],
           [46.24728523837533, -84.10425573755919],
           [46.2507730468595, -84.10826189774069],
           [46.24882854764473, -84.11084881657229]
@@ -1036,12 +1014,14 @@
         priority: 2,
         coords: [
           [46.50342276864514, -84.35503983602777],
-          [46.50262185716084, -84.3547855693472],
+ [46.50262185716084, -84.3547855693472],
           [46.5025724967013, -84.35278940727147],
           [46.50122174900059, -84.3521789690936],
-          [46.50160290053618, -84.34885788868701], [46.50276546013386, -84.34887345399252],
+          [46.50160290053618, -84.34885788868701],
+          [46.50276546013386, -84.34887345399252],
           [46.50289333588828, -84.34934554110109],
-          [46.50460358080307, -84.34963880645857], [46.50443009106375, -84.35517086208266],
+          [46.50460358080307, -84.34963880645857],
+          [46.50443009106375, -84.35517086208266],
           [46.50342276864514, -84.35503983602777]
         ]
       },
@@ -1085,11 +1065,9 @@
           [46.49114849566179, -84.39370493657638],
           [46.5008549302076, -84.35423805340655],
           [46.50120468436894, -84.35227442218863],
-          [46.50253978108293, -84.35280942739139],
-          [46.50259485790011, -84.35483115878033],
+          [46.50253978108293, -84.35280942739139], [46.50259485790011, -84.35483115878033],
           [46.51098433688264, -84.35764988722967],
-          [46.51215669735508, -84.35297398210834],
-          [46.51841492734196, -84.35516378562028],
+          [46.51215669735508, -84.35297398210834], [46.51841492734196, -84.35516378562028],
           [46.52076486891514, -84.37116621048087],
           [46.52025958550052, -84.38428882053145],
           [46.50296154977235, -84.4023948242468]
@@ -1099,7 +1077,8 @@
         name: "St Marys East",
         priority: 4,
         coords: [
-          [46.49920789990546, -84.3410716162919], [46.48677237479293, -84.30544852473864],
+          [46.49920789990546, -84.3410716162919],
+          [46.48677237479293, -84.30544852473864],
           [46.49168439204463, -84.29324622915287],
           [46.50424175559643, -84.30907677905491],
           [46.50774094071419, -84.33456487903865],
@@ -1117,7 +1096,7 @@
         priority: 4,
         coords: [
           [46.48819835392458, -84.39214449611951],
- [46.504053081629, -84.40398504713255],
+          [46.504053081629, -84.40398504713255],
           [46.52147483185529, -84.41459405945723],
           [46.50486420013269, -84.48878114809985],
           [46.51235023259917, -84.53684869437484],
@@ -1131,13 +1110,14 @@
         priority: 5,
         coords: [
           [46.48641012490013, -84.30552837972743],
-          [46.46836322882273, -84.30454966217449], [46.45992843527194, -84.28819352616775],
+          [46.46836322882273, -84.30454966217449],
+          [46.45992843527194, -84.28819352616775],
           [46.33257224917644, -84.22946122640019],
           [46.32546949927995, -84.14859854639492],
- [46.36784658151392, -84.16103298383544],
+          [46.36784658151392, -84.16103298383544],
           [46.44230388061651, -84.22757911062349],
           [46.49338032957734, -84.22419598835886],
- [46.5132991461564, -84.25673377877682],
+          [46.5132991461564, -84.25673377877682],
           [46.48641012490013, -84.30552837972743]
         ]
       },
@@ -1171,7 +1151,8 @@
         coords: [
           [46.3263040977802, -84.16857497810767],
           [46.3319943811147, -84.22932580486108],
-          [46.28207950918444, -84.22579996650516], [46.28496992202869, -84.21655859555204],
+          [46.28207950918444, -84.22579996650516],
+ [46.28496992202869, -84.21655859555204],
           [46.28932089376589, -84.21021870289286],
           [46.26906380567062, -84.18866083298481],
  [46.26400904376656, -84.18496882334621],
@@ -1179,7 +1160,7 @@
           [46.25344339854531, -84.187563928424],
           [46.24859284986211, -84.18286379163936],
           [46.24675191822081, -84.1906793992049],
-          [46.24686570706122, -84.2120876958904],
+ [46.24686570706122, -84.2120876958904],
           [46.23350530153131, -84.21576963962154],
           [46.21295137477245, -84.23790276553889],
           [46.16154830345334, -84.22846330437383],
@@ -1193,7 +1174,8 @@
           [46.24444954839638, -84.10632606213962],
           [46.24907458520188, -84.11095384586821],
           [46.25106158296295, -84.10808362028804],
-          [46.24775712164677, -84.10419447332461], [46.2449886484472, -84.10643205536024],
+          [46.24775712164677, -84.10419447332461],
+          [46.2449886484472, -84.10643205536024],
           [46.24011439714796, -84.10299915765719],
           [46.24714551631786, -84.09653628735192],
           [46.26353194058051, -84.08811180882806],
@@ -1233,9 +1215,9 @@
           [46.63640330164755, -85.05157095699286],
           [46.47736177620452, -85.05703527787004],
           [46.4395104357635, -84.82768834824277],
-          [46.45287617414758, -84.59250264503308],
+ [46.45287617414758, -84.59250264503308],
           [46.7129321654495, -84.36562111008047],
- [46.94284590627019, -84.47305535972288],
+          [46.94284590627019, -84.47305535972288],
           [46.78696645760945, -84.98210486641898],
           [46.63640330164755, -85.05157095699286]
         ]
@@ -1248,7 +1230,7 @@
           [45.30207080998667, -83.44012457832177],
           [45.92153632922324, -83.48850305509379],
           [45.96499023784975, -84.07387194875606],
-          [45.99197827083518, -84.53912515684598],
+ [45.99197827083518, -84.53912515684598],
           [45.92499784556291, -84.56022647433275],
           [45.69068941377952, -84.57906512627072]
         ]
@@ -1259,10 +1241,10 @@
         coords: [
           [48.29995481326721, -84.61764271930238],
           [48.496394896617, -86.30554216059541],
- [47.62994523347085, -87.68232253632409],
+          [47.62994523347085, -87.68232253632409],
           [47.30996410569848, -87.99709081873186],
           [46.72453858845436, -88.53108885084724],
- [46.86648577690079, -88.02398585124052],
+          [46.86648577690079, -88.02398585124052],
           [46.52988565173695, -87.4580226848331],
           [46.38096314232588, -86.70442454718538],
           [46.72522981785652, -85.14746056403419],
@@ -1272,7 +1254,6 @@
       }
     ];
 
-    // Standard PNPOLY Ray-Casting algorithm: lat = y, lon = x
     function isPointInPolygon(testLat, testLon, polygon) {
       let inside = false;
       const n = polygon.length;
@@ -1288,7 +1269,6 @@
       return inside;
     }
 
-    // Distance from a point to a line segment in meters with latitude aspect-ratio compensation
     function distToSegmentMeters(plat, plon, lat1, lon1, lat2, lon2) {
       const cosLat = Math.cos(plat * Math.PI / 180);
       const px = plon * cosLat * 111320;
@@ -1307,7 +1287,6 @@
       return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
     }
 
-    // Distance from point to polygon perimeter in meters
     function distToPolygonPerimeter(lat, lon, polygon) {
       let minDist = Infinity;
       const n = polygon.length;
@@ -1318,7 +1297,6 @@
       return minDist;
     }
 
-    // Resolve location: Strict priority check first, then closest perimeter fallback
     function resolveKmlGeofence(lat, lon) {
       if (typeof lat !== 'number' || typeof lon !== 'number' || isNaN(lat) || isNaN(lon)) {
         return "Unknown";
@@ -1343,10 +1321,6 @@
       return closestPoly;
     }
 
-    // Color logic:
-    // Purple = Boat Basin
-    // Yellow = Lower Dam
-    // White  = All other locations
     function getLocationColorClass(locationName) {
       if (locationName === "Boat Basin") return "loc-boat-basin";
       if (locationName === "Lower Dam") return "loc-lower-dam";
@@ -1510,7 +1484,6 @@
       renderAisMap();
     }
 
-    // OVERLAY BUTTON 1: Soo Locks (Red)
     function resetAisToLocks() {
       trackedMmsi = null;
       customCenter = null;
@@ -1519,7 +1492,6 @@
       renderAisMap();
     }
 
-    // OVERLAY BUTTON 2: Boat Basin (Purple)
     function panToBoatBasin() {
       trackedMmsi = null;
       customCenter = {
@@ -1532,7 +1504,6 @@
       renderAisMap();
     }
 
-    // OVERLAY BUTTON 3: Lower Dam (Yellow)
     function panToLowerDam() {
       trackedMmsi = null;
       customCenter = {
@@ -1623,7 +1594,7 @@
     setInterval(fetchNoaaData, 300000);
 
     // =========================================================================
-    // 7. TWO-COLUMN FLOATING PLANT FLEET (13 VESSELS + 14TH SLOT LEGEND)
+    // 7. TWO-COLUMN FLOATING PLANT FLEET (INITIAL BERTHS RESTORED)
     // =========================================================================
     const defaultFleet = [
       { name: "NICOLET",    type: "Derrick Barge",   mmsi: "366999398", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 },
@@ -1641,7 +1612,7 @@
       { name: "SAFEBOAT",   type: "Launch Boat",     mmsi: "369970895", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 }
     ];
 
-    const STORAGE_KEY = 'usace_stmarys_fleet_v14';
+    const STORAGE_KEY = 'usace_stmarys_fleet_v2_1';
     let fleetData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultFleet;
 
     function renderFleet() {
@@ -1652,8 +1623,7 @@
         const detectedLoc = resolveKmlGeofence(unit.lat, unit.lon);
         unit.location = detectedLoc;
         const colorClass = getLocationColorClass(detectedLoc);
-        
-        // Motion Icon: Anchor if moored (sog <= 0.5 kts), Waves if underway (sog > 0.5 kts)
+
         const isUnderway = (unit.sog !== undefined && unit.sog > 0.5);
         const motionIcon = isUnderway 
           ? `<span class="motion-icon motion-underway" title="Underway (SOG: ${unit.sog || 0} kts)">🌊</span>`
@@ -1680,7 +1650,6 @@
         grid.appendChild(card);
       });
 
-      // Render Revised 14th Slot Legend Card (Row 7, Column 2)
       const legendSlot = document.createElement('div');
       legendSlot.className = 'legend-card';
       legendSlot.innerHTML = `
@@ -1709,10 +1678,9 @@
     }
 
     // =========================================================================
-    // 8. AISSTREAM.IO LIVE WEBSOCKET TELEMETRY PIPELINE
+    // 8. AIS TELEMETRY STREAM & STATUS HANDLING
     // =========================================================================
-    // Replace with your API key from https://aisstream.io/account
-    const AISSTREAM_API_KEY = "0e07bfa1b46ab4734176c3fef5cc046b9e0e5bef";
+    const AISSTREAM_API_KEY = "PASTE_YOUR_API_KEY_HERE";
     let aisSocket = null;
     let aisReconnectTimer = null;
 
@@ -1723,8 +1691,8 @@
     }
 
     function initAisStreamWebSocket() {
-      if (!AISSTREAM_API_KEY || AISSTREAM_API_KEY === "0e07bfa1b46ab4734176c3fef5cc046b9e0e5bef") {
-        updateAisBadge('', 'AIS: Standby');
+      if (!AISSTREAM_API_KEY || AISSTREAM_API_KEY === "PASTE_YOUR_API_KEY_HERE") {
+        updateAisBadge('', 'AIS: Local Fixes');
         return;
       }
 
@@ -1778,13 +1746,13 @@
         };
 
         aisSocket.onerror = function () {
-          updateAisBadge('', 'AIS: Conn Error');
+          updateAisBadge('', 'AIS: Conn Blocked (Proxy Req)');
         };
 
         aisSocket.onclose = function () {
-          updateAisBadge('', 'AIS: Reconnecting in 10s');
+          updateAisBadge('', 'AIS: Standby (Cached)');
           clearTimeout(aisReconnectTimer);
-          aisReconnectTimer = setTimeout(initAisStreamWebSocket, 10000);
+          aisReconnectTimer = setTimeout(initAisStreamWebSocket, 15000);
         };
       } catch (err) {
         updateAisBadge('', 'AIS: Offline');
@@ -1793,17 +1761,16 @@
 
     initAisStreamWebSocket();
 
-    // Notes persistence
     const notesEl = document.getElementById('dailyNotes');
-    notesEl.value = localStorage.getItem('usace_stmarys_notes_v14') || "0700 Tailboard Brief | Verify cold-water PPE & VHF Ch. 12/14/16 comms with VTS St. Marys River.";
+    notesEl.value = localStorage.getItem('usace_stmarys_notes_v2_1') || "0700 Tailboard Brief | Verify cold-water PPE & VHF Ch. 12/14/16 comms with VTS St. Marys River.";
     notesEl.addEventListener('input', () => {
-      localStorage.setItem('usace_stmarys_notes_v14', notesEl.value);
+      localStorage.setItem('usace_stmarys_notes_v2_1', notesEl.value);
     });
 
     const bnmEl = document.getElementById('uscgBnmNotes');
-    bnmEl.value = localStorage.getItem('usace_stmarys_bnm_v14') || "• Monitor VTS Sault Ste. Marie Ch. 12 for downbound laker traffic.\n• Check weekly D9 LNM for St. Marys River buoy/light discrepancies.";
+    bnmEl.value = localStorage.getItem('usace_stmarys_bnm_v2_1') || "• Monitor VTS Sault Ste. Marie Ch. 12 for downbound laker traffic.\n• Check weekly D9 LNM for St. Marys River buoy/light discrepancies.";
     bnmEl.addEventListener('input', () => {
-      localStorage.setItem('usace_stmarys_bnm_v14', bnmEl.value);
+      localStorage.setItem('usace_stmarys_bnm_v2_1', bnmEl.value);
     });
 
     renderFleet();
