@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Raw AIS Data | St. Marys River Fleet</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08111f;
+      --panel: #0f1d31;
+      --border: #2b405d;
+      --text: #e5eefb;
+      --muted: #9fb3c8;
+      --accent: #38bdf8;
+      --danger: #fda4af;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border);
+      background: #0b1728;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    main {
+      width: min(1600px, calc(100% - 32px));
+      margin: 20px auto;
+    }
+
+    .toolbar,
+    .data-panel {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--panel);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      margin-bottom: 14px;
+    }
+
+    .status {
+      flex: 1 1 300px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    button,
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 8px 12px;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      background: rgba(14, 116, 144, 0.18);
+      color: #bae6fd;
+      cursor: pointer;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    button:hover,
+    button:focus-visible,
+    .back-link:hover,
+    .back-link:focus-visible {
+      background: var(--accent);
+      color: #082f49;
+      outline: none;
+    }
+
+    .data-panel {
+      overflow: hidden;
+    }
+
+    .data-panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    pre {
+      min-height: 420px;
+      max-height: calc(100vh - 220px);
+      margin: 0;
+      overflow: auto;
+      padding: 16px;
+      background: #050b14;
+      color: #dbeafe;
+      font: 0.82rem/1.45 Consolas, "Courier New", monospace;
+      tab-size: 2;
+      white-space: pre;
+    }
+
+    .error {
+      color: var(--danger);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>St. Marys River Fleet — Raw AIS Data</h1>
+
+    <!-- Change this path if your dashboard is deployed as index.html instead. -->
+    <a class="back-link" href="./SMR_Dashboard_V26.html">
+      ← Return to Dashboard
+    </a>
+  </header>
+
+  <main>
+    <section class="toolbar" aria-label="AIS data controls">
+      <div id="status" class="status">Loading AIS data…</div>
+      <button id="reloadButton" type="button">Reload Data</button>
+      <button id="downloadButton" type="button" disabled>Download JSON</button>
+    </section>
+
+    <section class="data-panel" aria-label="Raw AIS JSON">
+      <div class="data-panel-header">
+        <span>Source: <strong id="sourceName">fleet_positions.json</strong></span>
+        <span id="entryCount"></span>
+      </div>
+      <pre id="rawData">Loading…</pre>
+    </section>
+  </main>
+
+  <script>
+    /*
+      Use fleet_positions.json for the data currently persisted by the Action.
+
+      If you implement the optional full-message archive in Section 3 below,
+      change this value to:
+        const DATA_FILE = "./ais_raw_data.json";
+    */
+    const DATA_FILE = "./fleet_positions.json";
+
+    let serializedData = "";
+
+    const statusElement = document.getElementById("status");
+    const rawDataElement = document.getElementById("rawData");
+    const entryCountElement = document.getElementById("entryCount");
+    const sourceNameElement = document.getElementById("sourceName");
+    const reloadButton = document.getElementById("reloadButton");
+    const downloadButton = document.getElementById("downloadButton");
+
+    sourceNameElement.textContent = DATA_FILE.replace("./", "");
+
+    function getEntryCount(data) {
+      if (Array.isArray(data)) {
+        return data.length;
+      }
+
+      if (data && typeof data === "object") {
+        return Object.keys(data).length;
+      }
+
+      return 0;
+    }
+
+    async function loadAISData() {
+      reloadButton.disabled = true;
+      downloadButton.disabled = true;
+      statusElement.classList.remove("error");
+      statusElement.textContent = "Loading AIS data…";
+      rawDataElement.textContent = "Loading…";
+
+      try {
+        /*
+          The timestamp query parameter avoids displaying a browser-cached
+          copy after the GitHub Action updates the JSON file.
+        */
+        const response = await fetch(
+          `${DATA_FILE}?cacheBust=${Date.now()}`,
+          { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Request failed: HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        serializedData = JSON.stringify(data, null, 2);
+
+        rawDataElement.textContent = serializedData;
+        entryCountElement.textContent =
+          `${getEntryCount(data)} top-level record(s)`;
+
+        statusElement.textContent =
+          `Loaded ${DATA_FILE.replace("./", "")} at ` +
+          `${new Date().toLocaleString()}`;
+
+        downloadButton.disabled = false;
+      } catch (error) {
+        serializedData = "";
+        rawDataElement.textContent =
+          "Unable to load AIS data.\n\n" +
+          `Reason: ${error.message}\n\n` +
+          "Confirm that the JSON data file exists in the same published " +
+          "directory as this page and that the GitHub Action has completed.";
+
+        entryCountElement.textContent = "";
+        statusElement.textContent = "AIS data load failed.";
+        statusElement.classList.add("error");
+      } finally {
+        reloadButton.disabled = false;
+      }
+    }
+
+    function downloadAISData() {
+      if (!serializedData) return;
+
+      const blob = new Blob([serializedData], {
+        type: "application/json"
+      });
+
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = downloadUrl;
+      link.download = DATA_FILE.replace("./", "");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      URL.revokeObjectURL(downloadUrl);
+    }
+
+    reloadButton.addEventListener("click", loadAISData);
+    downloadButton.addEventListener("click", downloadAISData);
+
+    loadAISData();
+  </script>
+</body>
+</html>
