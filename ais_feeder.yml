@@ -1,0 +1,39 @@
+name: Update Fleet Positions
+
+on:
+  schedule:
+    # Runs automatically every 5 minutes
+    - cron: '*/5 * * * *'
+  # Allows you to click "Run workflow" manually in GitHub Actions tab for instant testing
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  poll-ais:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install ws
+
+      - name: Ingest Live AIS Telemetry from AISStream
+        env:
+          AISSTREAM_API_KEY: ${{ secrets.AISSTREAM_API_KEY }}
+        run: node fetch_ais.js
+
+      - name: Commit and push updated positions
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add fleet_positions.json
+          git commit -m "Auto-update live vessel fixes [skip ci]" || exit 0
+          git push
