@@ -54,7 +54,7 @@ ws.on('open', () => {
     ws.close();
     console.log("Run completed successfully.");
     process.exit(0);
-  }, 35000);
+  }, 900000);
 });
 
 ws.on('message', (data) => {
