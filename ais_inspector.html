@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>USACE St. Marys — Raw AIS Telemetry Inspector</title>
+  <style>
+    body { background: #0f172a; color: #f8fafc; font-family: Segoe UI, sans-serif; padding: 20px; }
+    h1 { color: #38bdf8; font-size: 1.4rem; margin-bottom: 8px; }
+    .status-bar { margin-bottom: 16px; font-size: 0.85rem; color: #94a3b8; }
+    table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #334155; font-size: 0.82rem; }
+    th { background: #111827; color: #94a3b8; text-transform: uppercase; font-size: 0.72rem; }
+    .live { color: #34d399; font-weight: bold; }
+    .stale { color: #f87171; font-weight: bold; }
+    .btn { background: #0284c7; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🛰️ USACE St. Marys River Section — Server Telemetry Inspector</h1>
+  <div class="status-bar">
+    Reading: <code>./fleet_positions.json</code> | 
+    <span id="loadStatus">Loading...</span> | 
+    <button class="btn" onclick="loadData()">↻ Refresh Now</button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Vessel Name</th>
+        <th>MMSI</th>
+        <th>Type</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>SOG (kts)</th>
+        <th>Last Broadcast Time (UTC)</th>
+        <th>Age</th>
+      </tr>
+    </thead>
+    <tbody id="telemetryBody"></tbody>
+  </table>
+
+  <script>
+    const FLEET = [
+      { name: "NICOLET", type: "Derrick Barge", mmsi: "366999398" },
+      { name: "HARVEY", type: "Crane Barge", mmsi: "366999311" },
+      { name: "AQUADIGGER", type: "Excavator Barge", mmsi: "368926311" },
+      { name: "CHERAW", type: "Tug", mmsi: "366999428" },
+      { name: "PEARCE", type: "Tug", mmsi: "338924169" },
+      { name: "LAWSON", type: "Tug", mmsi: "338924170" },
+      { name: "DETROIT", type: "Tug", mmsi: "338925325" },
+      { name: "FREDERICK", type: "Tug", mmsi: "366999409" },
+      { name: "WHITEFISH", type: "Tug", mmsi: "366999314" },
+      { name: "BUFE", type: "Survey Boat", mmsi: "366999407" },
+      { name: "MACKIN", type: "Survey Boat", mmsi: "368389980" },
+      { name: "MUNSON", type: "Launch Boat", mmsi: "368926566" },
+      { name: "SAFEBOAT", type: "Launch Boat", mmsi: "369970895" }
+    ];
+
+    async function loadData() {
+      const statusEl = document.getElementById('loadStatus');
+      const bodyEl = document.getElementById('telemetryBody');
+      statusEl.textContent = "Fetching...";
+      try {
+        const res = await fetch('./fleet_positions.json?t=' + Date.now());
+        if (!res.ok) throw new Error("File not found or HTTP error");
+        const data = await res.json();
+        statusEl.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+        bodyEl.innerHTML = '';
+
+        FLEET.forEach(v => {
+          const pos = data[v.mmsi];
+          const hasPos = pos && pos.lat !== undefined;
+          const tr = document.createElement('tr');
+          
+          let ageStr = "No data yet";
+          let isStale = true;
+          if (hasPos && pos.updated) {
+            const ageHr = (Date.now() - new Date(pos.updated).getTime()) / 3600000;
+            isStale = ageHr > 48;
+            ageStr = ageHr < 1 ? `${Math.round(ageHr * 60)}m ago` : `${Math.round(ageHr)}h ago`;
+          }
+
+          tr.innerHTML = `
+            <td><strong>${v.name}</strong></td>
+            <td><code>${v.mmsi}</code></td>
+            <td>${v.type}</td>
+            <td>${hasPos ? pos.lat.toFixed(6) : '--'}</td>
+            <td>${hasPos ? pos.lon.toFixed(6) : '--'}</td>
+            <td>${hasPos ? (pos.sog || 0.0) : '--'}</td>
+            <td>${hasPos ? (pos.updated || pos.time_utc || 'Recorded') : 'Awaiting broadcast'}</td>
+            <td class="${isStale ? 'stale' : 'live'}">${ageStr}</td>
+          `;
+          bodyEl.appendChild(tr);
+        });
+      } catch (e) {
+        statusEl.innerHTML = `<span style="color:#ef4444;">Error reading fleet_positions.json: ${e.message}</span>`;
+      }
+    }
+    loadData();
+    setInterval(loadData, 30000);
+  </script>
+</body>
+</html>
