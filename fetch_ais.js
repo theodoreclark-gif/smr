@@ -1,39 +1,55 @@
+
 const WebSocket = require('ws');
 const fs = require('fs');
 
 const API_KEY = process.env.AISSTREAM_API_KEY;
 
-// Only transponding vessels
+// Only your active vessels with AIS transponders (11 vessels)
 const FLEET_MMSIS = [
-  "338924170", "366999398", "338924169", "366999311",
-  "338925325", "366999428", "368926311", "368389980",
-  "366999407", "368926566", "369970895"
+  "338924170", // LAWSON
+  "366999398", // NICOLET
+  "338924169", // PEARCE
+  "338925325", // DETROIT
+  "366999428", // CHERAW
+  "368389980", // MACKIN
+  "366999407", // BUFE
+  "368926566", // MUNSON
+  "369970895"  // SAFEBOAT
+  // Note: HARVEY, 300 BARGE, AQUADIGGER, and SHADNAW are managed via mobile_updater.html
 ];
 
+// Load existing positions file so manual updates to non-AIS barges are never wiped out
 let positions = {};
 try {
   if (fs.existsSync('fleet_positions.json')) {
     positions = JSON.parse(fs.readFileSync('fleet_positions.json', 'utf8'));
   }
 } catch (e) {
-  console.log("Starting fresh positions file.");
+  console.log("Creating fresh positions cache.");
 }
 
+console.log("Connecting to AISStream.io telemetry stream...");
 const ws = new WebSocket("wss://stream.aisstream.io/v0/stream");
 
 ws.on('open', () => {
-  console.log("Connected to AISStream. Subscribing to St. Marys Section fleet...");
-  ws.send(JSON.stringify({
+  console.log("Connected! Subscribing to USACE St. Marys Section fleet...");
+  const subscriptionMessage = {
     APIKey: API_KEY,
-    BoundingBoxes: [[[45.5, -85.5], [47.2, -83.4]]],
+    BoundingBoxes: [
+      [[45.5, -85.5], [47.2, -83.4]] // St. Marys Corridor, Whitefish Bay & Straits
+    ],
     FiltersShipMMSI: FLEET_MMSIS,
     FilterMessageTypes: ["PositionReport"]
-  }));
+  };
 
+  ws.send(JSON.stringify(subscriptionMessage));
+
+  // Listen for 35 seconds to collect fresh position broadcasts, then save & exit
   setTimeout(() => {
+    console.log("Saving collected telemetry to fleet_positions.json...");
     fs.writeFileSync('fleet_positions.json', JSON.stringify(positions, null, 2));
     ws.close();
-    console.log("Telemetry cycle saved successfully.");
+    console.log("Telemetry run completed successfully.");
     process.exit(0);
   }, 35000);
 });
@@ -47,7 +63,7 @@ ws.on('message', (data) => {
       const mmsi = String(meta.MMSI || pos.UserID);
 
       if (pos.Latitude && pos.Longitude) {
-        // Tag incoming packets as automated AIS source
+        // Tag incoming packets as automated AIS source with ISO timestamp
         positions[mmsi] = {
           ...(positions[mmsi] || {}),
           lat: pos.Latitude,
@@ -56,12 +72,14 @@ ws.on('message', (data) => {
           source: "AIS",
           updated: new Date().toISOString()
         };
-        console.log(`Updated AIS fix for ${mmsi}: [${pos.Latitude}, ${pos.Longitude}]`);
+        console.log(`Updated fix for MMSI ${mmsi}: Lat ${pos.Latitude}, Lon ${pos.Longitude}, SOG ${pos.Sog}`);
       }
     }
   } catch (err) {
-    console.warn("Parse warning:", err);
+    console.warn("Message parsing warning:", err);
   }
 });
 
-ws.on('error', (err) => console.error("WebSocket error:", err));
+ws.on('error', (err) => {
+  console.error("WebSocket error:", err);
+});
