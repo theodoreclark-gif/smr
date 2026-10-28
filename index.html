@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Strict origin referrer policy to prevent YouTube Error 153 -->
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <title>USACE St. Marys River Section | Common Operating Picture v3.2</title>
+  <title>USACE St. Marys River Section | Common Operating Picture v4.2</title>
   <style>
     :root {
       --usace-red: #c41230;
@@ -208,6 +209,7 @@
       align-items: center;
       flex-shrink: 0;
       gap: 8px;
+      z-index: 10;
     }
 
     .panel-title {
@@ -258,23 +260,30 @@
       height: 100%;
       width: 100%;
       min-height: 0;
+      display: flex;
+      flex-direction: column;
     }
 
+    /* FULLSCREEN RESPONSIVE MAP CONTAINER */
     .ais-body {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      display: flex;
-      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      display: block;
     }
 
-    iframe {
+    .ais-body iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       border: none;
-      flex-grow: 1;
-      min-height: 0;
+      display: block;
     }
 
     /* AIS MAP OVERLAY SHORTCUT BUTTONS */
@@ -285,7 +294,7 @@
       display: flex;
       flex-direction: column;
       gap: 7px;
-      z-index: 20;
+      z-index: 30;
     }
 
     .btn-overlay {
@@ -294,7 +303,7 @@
       font-weight: 800;
       border-radius: 6px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
       transition: all 0.15s ease-in-out;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -339,6 +348,15 @@
       background-color: #eab308;
       border-color: #facc15;
       color: #000000;
+    }
+
+    /* QUADRANT 2: WINDY WEATHER FRAME */
+    .windy-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      flex-grow: 1;
+      display: block;
     }
 
     /* BOTTOM LEFT: NOAA GAUGES STRIP + WIDESCREEN YOUTUBE CAM + USCG D9 */
@@ -442,6 +460,12 @@
       min-height: 0;
     }
 
+    .cam-video-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
     /* RIGHT COLUMN: USCG DISTRICT 9 NOTICES */
     .uscg-card {
       background: #0f172a;
@@ -521,7 +545,7 @@
       min-height: 44px;
     }
 
-    /* BOTTOM RIGHT: ZERO-SCROLL 2-COLUMN FLEET GRID */
+    /* BOTTOM RIGHT: ZERO-SCROLL 2-COLUMN FLEET GRID (100% STATIC DISPLAY) */
     .plant-container {
       padding: 6px 8px;
       display: flex;
@@ -631,7 +655,7 @@
       50% { opacity: 0.75; transform: scale(1.15); }
     }
 
-    /* LOCATION SOURCE BADGE (AIS VS MANUAL) */
+    /* SOURCE BADGE */
     .source-badge {
       display: inline-block;
       padding: 2px 4px;
@@ -642,7 +666,6 @@
       text-align: center;
       min-width: 38px;
       line-height: 1.1;
-      cursor: pointer;
     }
 
     .source-AIS {
@@ -657,7 +680,7 @@
       border: 1px solid #d97706;
     }
 
-    /* TIMESTAMP BETWEEN SOURCE AND LOCATION */
+    /* TIMESTAMP */
     .timestamp-inline {
       font-size: 0.56rem;
       font-weight: 700;
@@ -669,7 +692,7 @@
       padding: 0 2px;
     }
 
-    /* PULLDOWN MENUS WITH SOLID BLACK BACKGROUND & WHITE TEXT */
+    /* READ-ONLY STATIC LOCATION BADGE */
     .location-wrapper {
       position: relative;
       display: flex;
@@ -678,35 +701,33 @@
       width: 100%;
     }
 
-    .location-select {
+    .static-location-badge {
       width: 100%;
-      padding: 2px 4px;
-      font-size: 0.65rem;
+      padding: 3px 6px;
+      font-size: 0.66rem;
       font-weight: 700;
       border-radius: 4px;
-      background-color: #000000 !important;
-      color: #ffffff !important;
-      border: 1px solid #475569;
-      cursor: pointer;
-      outline: none;
+      white-space: nowrap;
+      overflow: hidden;
       text-overflow: ellipsis;
+      text-align: center;
+      user-select: none;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #ffffff;
+      line-height: 1.15;
     }
 
-    .location-select option {
-      background-color: #000000 !important;
-      color: #ffffff !important;
-      font-size: 0.72rem;
-      font-weight: 600;
+    .static-location-badge.loc-boat-basin {
+      color: #e9d5ff;
+      border: 1px solid #a855f7;
+      background-color: rgba(168, 85, 247, 0.25);
     }
 
-    .location-select.loc-boat-basin {
-      border: 1px solid #a855f7 !important;
-      box-shadow: 0 0 3px rgba(168, 85, 247, 0.4);
-    }
-
-    .location-select.loc-lower-dam {
-      border: 1px solid #eab308 !important;
-      box-shadow: 0 0 3px rgba(234, 179, 8, 0.4);
+    .static-location-badge.loc-lower-dam {
+      color: #fef08a;
+      border: 1px solid #eab308;
+      background-color: rgba(234, 179, 8, 0.25);
     }
 
     /* 14th SLOT LEGEND CARD */
@@ -783,7 +804,7 @@
       <button class="btn btn-fs" id="btnFullscreen" onclick="toggleDashboardFullscreen()" title="Tap to enter or exit full-screen kiosk display">⛶ Fullscreen</button>
       <button class="btn btn-awake active" id="btnAwake" onclick="toggleScreenWakeLock()" title="Keeps SMART Board display awake and prevents sleep mode">☕ Awake: ON</button>
       <button class="btn btn-refresh-all" onclick="refreshAllFrames()" title="Synchronize AIS map, river cam, weather radar, NOAA gauges, and fleet locations">↻ Refresh All</button>
-      <div class="version-tag" id="appVersion">v3.2</div>
+      <div class="version-tag" id="appVersion">v4.2</div>
       <div class="clock-box">
         <div class="clock-time" id="localClock">00:00:00</div>
         <div class="clock-date" id="localDate">Loading Date...</div>
@@ -794,7 +815,7 @@
   <!-- 4-QUADRANT MAIN GRID -->
   <div class="grid-container">
 
-    <!-- QUADRANT 1: LIVE AIS MAP (TOP-LEFT) WITH LOWER-RIGHT OVERLAY ACTION STACK -->
+    <!-- QUADRANT 1: LIVE AIS MAP (TOP-LEFT) - FULL EXPANSION RESOLVED -->
     <div class="panel">
       <div class="panel-header">
         <div class="panel-title">
@@ -806,10 +827,12 @@
           <button class="btn" id="btnMt" onclick="switchAisProvider('marinetraffic')">MarineTraffic</button>
         </div>
       </div>
-      <div class="panel-body ais-body">
-        <iframe id="aisFrame" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+      <div class="panel-body">
+        <div class="ais-body" id="aisWrapper">
+          <iframe id="aisFrame" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+        </div>
 
-        <!-- OVERLAY SHORTCUT BUTTONS ON LOWER-RIGHT OF AIS MAP -->
+        <!-- OVERLAY SHORTCUT BUTTONS -->
         <div class="ais-overlay-stack">
           <button class="btn-overlay btn-overlay-locks" onclick="resetAisToLocks()" title="Center AIS map on Soo Locks (~3,000 ft view)">
             🟢 Soo Locks
@@ -839,6 +862,7 @@
       <div class="panel-body">
         <iframe
           id="windyFrame"
+          class="windy-frame"
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
           referrerpolicy="strict-origin-when-cross-origin"
           src="https://embed.windy.com/embed2.html?lat=46.500&lon=-84.350&detailLat=46.500&detailLon=-84.350&width=800&height=600&zoom=11&level=surface&overlay=wind&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=true&type=map&location=coordinates&detail=&metricWind=kt&metricTemp=%C2%B0F&radarRange=-1">
@@ -948,10 +972,10 @@
       </div>
     </div>
 
-    <!-- QUADRANT 4: ST. MARYS RIVER FLOATING PLANT FLEET (2-COLUMN ZERO-SCROLL VIEW WITH 14TH SLOT LEGEND) -->
+    <!-- QUADRANT 4: ST. MARYS RIVER FLOATING PLANT FLEET (READ-ONLY STATIC VIEW) -->
     <div class="panel">
       <div class="panel-header">
-        <div class="panel-title">⚓ St. Marys River Fleet (Tap Vessel to Track | Pulldown Location / Source)</div>
+        <div class="panel-title">⚓ St. Marys River Fleet (Tap Vessel to Track | 100% Server Monitored)</div>
         <div class="panel-actions">
           <span class="badge-stream" id="aisStreamBadge">AIS: Synced</span>
         </div>
@@ -976,7 +1000,7 @@
     // =========================================================================
     // 0. FULLSCREEN KIOSK & SCREEN KEEP-AWAKE
     // =========================================================================
-    const CURRENT_DASHBOARD_VERSION = "v3.2";
+    const CURRENT_DASHBOARD_VERSION = "v4.2";
 
     function isCurrentlyFullscreen() {
       return !!(
@@ -1027,9 +1051,10 @@
 
     function handleResize() {
       const aisFrame = document.getElementById('aisFrame');
-      if (aisFrame) {
-        aisFrame.style.height = '100%';
+      const wrapper = document.getElementById('aisWrapper');
+      if (aisFrame && wrapper) {
         aisFrame.style.width = '100%';
+        aisFrame.style.height = '100%';
       }
     }
 
@@ -1106,27 +1131,6 @@
       lon: -84.3465,
       zoom: 15
     };
-
-    const OFFICIAL_LOCATIONS = [
-      "Boat Basin",
-      "Lower Dam",
-      "Holmstead",
-      "Slab Dock",
-      "Lock Chamber",
-      "Rock Cut",
-      "East Approach",
-      "West Approach",
-      "St Marys East",
-      "St Marys West",
-      "Sugar Island East",
-      "Sugar Island West",
-      "Neebish Island",
-      "Detour",
-      "Mackinaw Straights",
-      "Whitefish Bay",
-      "Lake Huron",
-      "Lake Superior"
-    ];
 
     const KML_POLYGONS = [
       {
@@ -1779,7 +1783,7 @@
     setInterval(fetchNoaaData, 300000);
 
     // =========================================================================
-    // 7. TWO-COLUMN FLEET GRID WITH SERVER-SYNC & TIMESTAMP OVERWRITES
+    // 7. TWO-COLUMN FLEET GRID (100% READ-ONLY STATIC DISPLAY)
     // =========================================================================
     const defaultFleet = [
       { name: "LAWSON",     type: "Tug",             mmsi: "338924170", hasAis: true,  location: "Boat Basin", source: "AIS",    lat: 46.5014, lon: -84.3409, sog: 0.0, updated: null },
@@ -1797,18 +1801,14 @@
       { name: "SHADNAW",    type: "Crane Barge",     mmsi: "SHADNAW",   hasAis: false, location: "Boat Basin", source: "Manual", lat: 46.5014, lon: -84.3409, sog: 0.0, updated: null }
     ];
 
-    const STORAGE_KEY = 'usace_stmarys_fleet_v3_2';
+    const STORAGE_KEY = 'usace_stmarys_fleet_v4_2';
     let fleetData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultFleet;
 
     function renderFleet() {
       const grid = document.getElementById('plantGridBody');
       grid.innerHTML = '';
 
-      fleetData.forEach((unit, idx) => {
-        if (unit.source === "AIS") {
-          unit.location = resolveKmlGeofence(unit.lat, unit.lon);
-        }
-
+      fleetData.forEach((unit) => {
         const isUnderway = (unit.sog !== undefined && unit.sog > 0.5);
         const motionIcon = isUnderway 
           ? `<span class="motion-icon motion-underway" title="Underway (SOG: ${unit.sog || 0} kts)">🌊</span>`
@@ -1825,12 +1825,6 @@
         const locClass = getLocationClass(unit.location);
         const actualTimeText = formatActualDateTime(unit.updated);
 
-        let optionsHtml = '';
-        OFFICIAL_LOCATIONS.forEach(loc => {
-          const selected = (unit.location === loc) ? 'selected' : '';
-          optionsHtml += `<option value="${loc}" ${selected}>${loc}</option>`;
-        });
-
         const card = document.createElement('div');
         card.className = 'vessel-card';
 
@@ -1840,12 +1834,12 @@
             <div class="vessel-type">${unit.type}</div>
           </div>
           ${motionIcon}
-          <span class="source-badge source-${unit.source}" onclick="toggleSource(${idx})" title="Location Source: Tap to toggle between AIS and Manual">${unit.source}</span>
+          <span class="source-badge source-${unit.source || 'Manual'}">${unit.source || 'Manual'}</span>
           <span class="timestamp-inline" title="Last update timestamp: ${unit.updated || 'Initial Default'}">${actualTimeText}</span>
           <div class="location-wrapper">
-            <select class="location-select ${locClass}" onchange="handleLocationChange(${idx}, this.value)">
-              ${optionsHtml}
-            </select>
+            <div class="static-location-badge ${locClass}" title="Location: ${unit.location}">
+              ${unit.location}
+            </div>
           </div>
         `;
         grid.appendChild(card);
@@ -1867,77 +1861,12 @@
       grid.appendChild(legendSlot);
     }
 
-    // Manual change: sets state to moored (sog=0), source to Manual, records timestamp, and queues sync
-    function handleLocationChange(idx, newLoc) {
-      fleetData[idx].location = newLoc;
-      fleetData[idx].source = "Manual";
-      fleetData[idx].sog = 0.0;
-      fleetData[idx].updated = new Date().toISOString();
-      saveFleet();
-      renderFleet();
-      syncManualPositionToServer(fleetData[idx]);
-    }
-
-    function toggleSource(idx) {
-      fleetData[idx].source = (fleetData[idx].source === "AIS") ? "Manual" : "AIS";
-      if (fleetData[idx].source === "Manual") {
-        fleetData[idx].sog = 0.0;
-      }
-      fleetData[idx].updated = new Date().toISOString();
-      saveFleet();
-      renderFleet();
-      syncManualPositionToServer(fleetData[idx]);
-    }
-
     function saveFleet() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(fleetData));
     }
 
-    // Optional direct GitHub API synchronization
-    async function syncManualPositionToServer(vessel) {
-      const gitHubToken = localStorage.getItem('usace_github_pat');
-      const gitHubRepo = localStorage.getItem('usace_github_repo'); // e.g. "username/repo"
-      if (!gitHubToken || !gitHubRepo) return;
-
-      try {
-        const fileUrl = `https://api.github.com/repos/${gitHubRepo}/contents/fleet_positions.json`;
-        const getRes = await fetch(fileUrl, {
-          headers: { 'Authorization': `token ${gitHubToken}`, 'Accept': 'application/vnd.github.v3+json' }
-        });
-        if (!getRes.ok) return;
-        const fileData = await getRes.json();
-        const currentContent = JSON.parse(atob(fileData.content));
-
-        currentContent[vessel.mmsi] = {
-          ...(currentContent[vessel.mmsi] || {}),
-          name: vessel.name,
-          location: vessel.location,
-          source: "Manual",
-          sog: 0.0,
-          updated: vessel.updated
-        };
-
-        await fetch(fileUrl, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${gitHubToken}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            message: `Manual update: ${vessel.name} to ${vessel.location}`,
-            content: btoa(JSON.stringify(currentContent, null, 2)),
-            sha: fileData.sha
-          })
-        });
-        console.log(`Synced ${vessel.name} update to GitHub repository.`);
-      } catch (e) {
-        console.warn("Server sync notice:", e);
-      }
-    }
-
     // =========================================================================
-    // 8. SERVER-SIDE TELEMETRY FETCHER WITH TIMESTAMP OVERWRITE RULE
+    // 8. TELEMETRY FETCHER (READS DIRECTLY FROM fleet_positions.json)
     // =========================================================================
     async function fetchFleetPositions() {
       try {
@@ -1949,24 +1878,24 @@
           fleetData.forEach(unit => {
             const serverData = livePositions[unit.mmsi];
             if (serverData) {
-              const serverTime = serverData.updated ? new Date(serverData.updated).getTime() : 0;
+              const rawTimestamp = serverData.updated || serverData.time_utc;
+              const serverTime = rawTimestamp ? new Date(rawTimestamp).getTime() : 0;
               const localTime = unit.updated ? new Date(unit.updated).getTime() : 0;
 
-              // AIS overwrites if it has a newer timestamp than the manual entry
-              if (serverTime >= localTime) {
+              if (serverTime >= localTime || !unit.updated) {
                 if (serverData.source === "AIS" && typeof serverData.lat === 'number' && typeof serverData.lon === 'number') {
                   unit.lat = serverData.lat;
                   unit.lon = serverData.lon;
                   unit.sog = serverData.sog || 0.0;
                   unit.source = "AIS";
                   unit.location = resolveKmlGeofence(serverData.lat, serverData.lon);
-                  unit.updated = serverData.updated || new Date().toISOString();
+                  unit.updated = rawTimestamp || new Date().toISOString();
                   updatedAny = true;
                 } else if (serverData.source === "Manual" && serverData.location) {
                   unit.location = serverData.location;
                   unit.source = "Manual";
                   unit.sog = 0.0;
-                  unit.updated = serverData.updated;
+                  unit.updated = rawTimestamp || new Date().toISOString();
                   updatedAny = true;
                 }
               }
@@ -1987,18 +1916,18 @@
     }
 
     fetchFleetPositions();
-    setInterval(fetchFleetPositions, 60000);
+    setInterval(fetchFleetPositions, 30000);
 
     const notesEl = document.getElementById('dailyNotes');
-    notesEl.value = localStorage.getItem('usace_stmarys_notes_v3_2') || "0700 Tailboard Brief | Verify cold-water PPE & VHF Ch. 12/14/16 comms with VTS St. Marys River.";
+    notesEl.value = localStorage.getItem('usace_stmarys_notes_v4_2') || "0700 Tailboard Brief | Verify cold-water PPE & VHF Ch. 12/14/16 comms with VTS St. Marys River.";
     notesEl.addEventListener('input', () => {
-      localStorage.setItem('usace_stmarys_notes_v3_2', notesEl.value);
+      localStorage.setItem('usace_stmarys_notes_v4_2', notesEl.value);
     });
 
     const bnmEl = document.getElementById('uscgBnmNotes');
-    bnmEl.value = localStorage.getItem('usace_stmarys_bnm_v3_2') || "• Monitor VTS Sault Ste. Marie Ch. 12 for downbound laker traffic.\n• Check weekly D9 LNM for St. Marys River buoy/light discrepancies.";
+    bnmEl.value = localStorage.getItem('usace_stmarys_bnm_v4_2') || "• Monitor VTS Sault Ste. Marie Ch. 12 for downbound laker traffic.\n• Check weekly D9 LNM for St. Marys River buoy/light discrepancies.";
     bnmEl.addEventListener('input', () => {
-      localStorage.setItem('usace_stmarys_bnm_v3_2', bnmEl.value);
+      localStorage.setItem('usace_stmarys_bnm_v4_2', bnmEl.value);
     });
 
     renderFleet();
