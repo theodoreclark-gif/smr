@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>USACE Fleet Location Updater</title>
+  <style>
+    :root {
+      --usace-red: #c41230;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --blue: #38bdf8;
+      --amber: #f59e0b;
+      --green: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 30px; }
+    header { background: #111827; border-bottom: 2px solid var(--usace-red); padding: 12px 16px; position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; }
+    h1 { font-size: 0.95rem; font-weight: 800; letter-spacing: 0.5px; }
+    .status-badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; font-weight: 700; background: #334155; color: var(--muted); }
+    .status-badge.live { background: rgba(16,185,129,0.2); color: var(--green); border: 1px solid var(--green); }
+    
+    /* Simplified Password Overlay (No token prompt) */
+    #authOverlay { position: fixed; inset: 0; background: rgba(15,23,42,0.96); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+    .login-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; width: 100%; max-width: 340px; text-align: center; }
+    .login-box h2 { font-size: 1.15rem; margin-bottom: 8px; }
+    .login-box p { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+    .login-box input { width: 100%; padding: 12px; margin-bottom: 12px; border-radius: 6px; border: 1px solid var(--border); background: #0f172a; color: #fff; font-size: 1.1rem; text-align: center; letter-spacing: 2px; }
+    .btn-submit { width: 100%; padding: 12px; background: var(--usace-red); color: white; border: none; border-radius: 6px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+
+    /* Vessel Cards */
+    .container { padding: 12px; display: flex; flex-direction: column; gap: 10px; max-width: 600px; margin: 0 auto; }
+    .v-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .v-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .v-title { font-weight: 800; font-size: 0.95rem; color: var(--blue); }
+    .v-type { font-size: 0.72rem; color: var(--muted); }
+    .v-meta { display: flex; gap: 8px; font-size: 0.7rem; align-items: center; }
+    .badge { padding: 2px 6px; border-radius: 3px; font-weight: 800; font-size: 0.65rem; }
+    .badge-ais { background: rgba(56,189,248,0.2); color: var(--blue); border: 1px solid #0284c7; }
+    .badge-man { background: rgba(245,158,11,0.2); color: var(--amber); border: 1px solid #d97706; }
+    .select-wrap { width: 100%; }
+    select { width: 100%; padding: 10px; font-size: 0.88rem; font-weight: 700; background: #000; color: #fff; border: 1px solid var(--border); border-radius: 6px; outline: none; }
+    .btn-save { padding: 9px; background: #047857; color: white; border: 1px solid #10b981; border-radius: 6px; font-weight: 700; font-size: 0.84rem; cursor: pointer; text-align: center; }
+    .btn-save:active { background: #059669; }
+  </style>
+</head>
+<body>
+
+  <!-- Password Overlay (Only PIN required on mobile) -->
+  <div id="authOverlay">
+    <div class="login-box">
+      <h2>🔒 Fleet Updater Lock</h2>
+      <p>Authorized USACE St. Marys Section personnel only.</p>
+      <input type="password" id="accessPass" placeholder="Enter PIN / Password" inputmode="numeric" />
+      <button class="btn-submit" onclick="authenticate()">Unlock Access</button>
+      <div id="authErr" style="color:#ef4444; font-size:0.75rem; margin-top:10px; display:none;">Incorrect Password</div>
+    </div>
+  </div>
+
+  <header>
+    <h1>USACE FLEET BERTH UPDATER</h1>
+    <div class="status-badge" id="syncStat">Connecting...</div>
+  </header>
+
+  <div class="container" id="vesselList"></div>
+
+  <script>
+    // =========================================================================
+    // CONFIGURATION (OPTION 1: Hardcoded credentials & paths)
+    // =========================================================================
+    const FLEET_PIN = "SMR_Fleet"; // <-- CHANGE THIS TO YOUR DESIRED TEAM PIN
+    const GITHUB_PAT = "PASTE_YOUR_GITHUB_TOKEN_HERE"; // <-- E.G. "ghp_xxxxxxxxxxxx"
+    
+    // Automatically extract "owner/repo" from GitHub Pages URL, or fall back to manual string
+    function getRepoPath() {
+      if (window.location.hostname.endsWith('github.io')) {
+        const owner = window.location.hostname.split('.')[0];
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        const repo = pathSegments[0];
+        return `${owner}/${repo}`;
+      }
+      return "YOUR_GITHUB_USERNAME/YOUR_REPO_NAME"; // <-- Fallback if run locally
+    }
+
+    const REPO_PATH = getRepoPath();
+
+    const LOCATIONS = [
+      "Boat Basin", "Lower Dam", "Holmstead", "Slab Dock", "Lock Chamber",
+      "Rock Cut", "East Approach", "West Approach", "St Marys East",
+      "St Marys West", "Sugar Island East", "Sugar Island West",
+      "Neebish Island", "Detour", "Mackinaw Straights", "Whitefish Bay",
+      "Lake Huron", "Lake Superior"
+    ];
+
+    // Canonical 13 Vessels matching main dashboard (v4.0)
+    const FLEET = [
+      { name: "LAWSON", mmsi: "338924170", type: "Tug" },
+      { name: "NICOLET", mmsi: "366999398", type: "Derrick Barge" },
+      { name: "PEARCE", mmsi: "338924169", type: "Tug" },
+      { name: "HARVEY", mmsi: "366999311", type: "Crane Barge" },
+      { name: "DETROIT", mmsi: "338925325", type: "Tug" },
+      { name: "300 BARGE", mmsi: "BARGE300", type: "Crane Barge" },
+      { name: "CHERAW", mmsi: "366999428", type: "Tug" },
+      { name: "AQUADIGGER", mmsi: "368926311", type: "Excavator Barge" },
+      { name: "MACKIN", mmsi: "368389980", type: "Survey Boat" },
+      { name: "BUFE", mmsi: "366999407", type: "Survey Boat" },
+      { name: "MUNSON", mmsi: "368926566", type: "Launch Boat" },
+      { name: "SAFEBOAT", mmsi: "369970895", type: "Launch Boat" },
+      { name: "SHADNAW", mmsi: "SHADNAW", type: "Crane Barge" }
+    ];
+
+    let currentPositions = {};
+
+    function authenticate() {
+      const pin = document.getElementById('accessPass').value;
+      if (pin === FLEET_PIN) {
+        document.getElementById('authOverlay').style.display = 'none';
+        sessionStorage.setItem('fleet_auth', 'true');
+        loadServerData();
+      } else {
+        document.getElementById('authErr').style.display = 'block';
+      }
+    }
+
+    // Preserve login across session refreshes
+    if (sessionStorage.getItem('fleet_auth') === 'true') {
+      document.getElementById('authOverlay').style.display = 'none';
+      loadServerData();
+    }
+
+    async function loadServerData() {
+      try {
+        const res = await fetch('./fleet_positions.json?t=' + Date.now());
+        if (res.ok) {
+          currentPositions = await res.json();
+          document.getElementById('syncStat').className = 'status-badge live';
+          document.getElementById('syncStat').textContent = 'Live Server';
+        } else {
+          document.getElementById('syncStat').textContent = 'Default State';
+        }
+      } catch (e) {
+        console.warn(e);
+        document.getElementById('syncStat').textContent = 'Offline/Cached';
+      }
+      renderList();
+    }
+
+    function renderList() {
+      const list = document.getElementById('vesselList');
+      list.innerHTML = '';
+
+      FLEET.forEach(v => {
+        const pos = currentPositions[v.mmsi] || { location: 'Boat Basin', source: 'Manual', updated: null };
+        const card = document.createElement('div');
+        card.className = 'v-card';
+
+        let opts = '';
+        LOCATIONS.forEach(l => {
+          opts += `<option value="${l}" ${pos.location === l ? 'selected' : ''}>${l}</option>`;
+        });
+
+        card.innerHTML = `
+          <div class="v-header">
+            <span class="v-title">${v.name}</span>
+            <span class="v-type">${v.type}</span>
+          </div>
+          <div class="v-meta">
+            <span class="badge ${pos.source === 'AIS' ? 'badge-ais' : 'badge-man'}">${pos.source || 'Manual'}</span>
+            <span style="color:var(--muted);">${pos.updated ? new Date(pos.updated).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'Default'}</span>
+          </div>
+          <div class="select-wrap">
+            <select id="sel_${v.mmsi}">
+              ${opts}
+            </select>
+          </div>
+          <button class="btn-save" id="btn_${v.mmsi}" onclick="updateBerth('${v.mmsi}', '${v.name}')">Update Berth</button>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    // Helper to encode UTF-8 to base64 for GitHub REST API
+    function utf8ToBase64(str) {
+      return window.btoa(unescape(encodeURIComponent(str)));
+    }
+
+    async function updateBerth(mmsi, name) {
+      const newLoc = document.getElementById(`sel_${mmsi}`).value;
+      const btn = document.getElementById(`btn_${mmsi}`);
+      
+      if (!GITHUB_PAT || GITHUB_PAT === "PASTE_YOUR_GITHUB_TOKEN_HERE") {
+        alert("Setup Note: Please replace 'PASTE_YOUR_GITHUB_TOKEN_HERE' in mobile_updater.html with your GitHub token.");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Committing...";
+
+      // Update in-memory coordinates
+      currentPositions[mmsi] = {
+        ...(currentPositions[mmsi] || {}),
+        name: name,
+        location: newLoc,
+        source: "Manual",
+        sog: 0.0,
+        updated: new Date().toISOString()
+      };
+
+      try {
+        const fileUrl = `https://api.github.com/repos/${REPO_PATH}/contents/fleet_positions.json`;
+        
+        // 1. Fetch current blob SHA [source: 3, 18, 20]
+        const getRes = await fetch(fileUrl, {
+          headers: {
+            'Authorization': `Bearer ${GITHUB_PAT}`,
+            'Accept': 'application/vnd.github+json'
+          }
+        });
+
+        if (!getRes.ok) {
+          throw new Error(`GitHub check error (${getRes.status}). Verify GITHUB_PAT permissions.`);
+        }
+
+        const fileData = await getRes.json();
+
+        // 2. Commit updated JSON to repository [source: 3, 18, 20]
+        const putRes = await fetch(fileUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${GITHUB_PAT}`,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Mobile Berth Update: ${name} -> ${newLoc}`,
+            content: utf8ToBase64(JSON.stringify(currentPositions, null, 2)),
+            sha: fileData.sha
+          })
+        });
+
+        if (putRes.ok) {
+          btn.textContent = "✓ Updated";
+          setTimeout(() => { btn.textContent = "Update Berth"; btn.disabled = false; }, 2000);
+          loadServerData();
+        } else {
+          const errData = await putRes.json();
+          alert(`GitHub API Error: ${errData.message || 'Write failed'}`);
+          btn.textContent = "Update Berth";
+          btn.disabled = false;
+        }
+      } catch (err) {
+        alert("Sync error: " + err.message);
+        btn.textContent = "Update Berth";
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
