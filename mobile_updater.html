@@ -221,7 +221,8 @@
         });
 
         if (!getRes.ok) {
-          throw new Error(`GitHub check error (${getRes.status}). Verify GITHUB_PAT permissions.`);
+          const errorBody = await getRes.text();
+          throw new Error(`GitHub ${getRes.status}: ${errorBody}`);
         }
 
         const fileData = await getRes.json();
