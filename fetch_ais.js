@@ -1,60 +1,41 @@
 const WebSocket = require('ws');
 const fs = require('fs');
 
-// Reads your secret API key from GitHub repository secrets
 const API_KEY = process.env.AISSTREAM_API_KEY;
 
-// All 13 St. Marys River Section USACE Vessels & MMSIs
+// Only transponding vessels
 const FLEET_MMSIS = [
-  "366999398", // NICOLET (Derrick Barge)
-  "366999311", // HARVEY (Crane Barge)
-  "368926311", // AQUADIGGER (Excavator Barge)
-  "366999428", // CHERAW (Tug)
-  "338924169", // PEARCE (Tug)
-  "338924170", // LAWSON (Tug)
-  "338925325", // DETROIT (Tug)
-  "366999409", // FREDERICK (Tug)
-  "366999314", // WHITEFISH (Tug)
-  "366999407", // BUFE (Survey Boat)
-  "368389980", // MACKIN (Survey Boat)
-  "368926566", // MUNSON (Launch Boat)
-  "369970895"  // SAFEBOAT (Launch Boat)
+  "338924170", "366999398", "338924169", "366999311",
+  "338925325", "366999428", "368926311", "368389980",
+  "366999407", "368926566", "369970895"
 ];
 
-// Load existing positions if file exists, or start fresh
 let positions = {};
 try {
   if (fs.existsSync('fleet_positions.json')) {
     positions = JSON.parse(fs.readFileSync('fleet_positions.json', 'utf8'));
   }
 } catch (e) {
-  console.log("Creating fresh positions cache.");
+  console.log("Starting fresh positions file.");
 }
 
-console.log("Connecting to AISStream.io telemetry stream...");
 const ws = new WebSocket("wss://stream.aisstream.io/v0/stream");
 
 ws.on('open', () => {
-  console.log("Connected! Subscribing to USACE fleet MMSIs...");
-  const subscriptionMessage = {
+  console.log("Connected to AISStream. Subscribing to St. Marys Section fleet...");
+  ws.send(JSON.stringify({
     APIKey: API_KEY,
-    BoundingBoxes: [
-      [[45.5, -85.5], [47.2, -83.4]] // St. Marys Corridor, Whitefish Bay & Straits
-    ],
+    BoundingBoxes: [[[45.5, -85.5], [47.2, -83.4]]],
     FiltersShipMMSI: FLEET_MMSIS,
     FilterMessageTypes: ["PositionReport"]
-  };
+  }));
 
-  ws.send(JSON.stringify(subscriptionMessage));
-
-  // Listen for 35 seconds to collect fresh position broadcasts, then save & exit
   setTimeout(() => {
-    console.log("Saving collected telemetry to fleet_positions.json...");
     fs.writeFileSync('fleet_positions.json', JSON.stringify(positions, null, 2));
     ws.close();
-    console.log("Run completed successfully.");
+    console.log("Telemetry cycle saved successfully.");
     process.exit(0);
-  }, 900000);
+  }, 35000);
 });
 
 ws.on('message', (data) => {
@@ -66,20 +47,21 @@ ws.on('message', (data) => {
       const mmsi = String(meta.MMSI || pos.UserID);
 
       if (pos.Latitude && pos.Longitude) {
+        // Tag incoming packets as automated AIS source
         positions[mmsi] = {
+          ...(positions[mmsi] || {}),
           lat: pos.Latitude,
           lon: pos.Longitude,
           sog: typeof pos.Sog === 'number' ? pos.Sog : 0.0,
+          source: "AIS",
           updated: new Date().toISOString()
         };
-        console.log(`Updated fix for MMSI ${mmsi}: Lat ${pos.Latitude}, Lon ${pos.Longitude}, SOG ${pos.Sog}`);
+        console.log(`Updated AIS fix for ${mmsi}: [${pos.Latitude}, ${pos.Longitude}]`);
       }
     }
   } catch (err) {
-    console.warn("Message parsing warning:", err);
+    console.warn("Parse warning:", err);
   }
 });
 
-ws.on('error', (err) => {
-  console.error("WebSocket error:", err);
-});
+ws.on('error', (err) => console.error("WebSocket error:", err));
