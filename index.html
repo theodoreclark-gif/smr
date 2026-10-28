@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Strict origin referrer policy to prevent YouTube Error 153 -->
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <title>USACE St. Marys River Section | Common Operating Picture v2.2</title>
+  <title>USACE St. Marys River Section | Common Operating Picture v3.2</title>
   <style>
     :root {
       --usace-red: #c41230;
@@ -155,6 +154,19 @@
       background-color: #059669;
     }
 
+    .btn-awake {
+      background-color: #0f766e;
+      border-color: #14b8a6;
+      font-weight: 700;
+    }
+
+    .btn-awake.active {
+      background-color: #0d9488;
+      border-color: #2dd4bf;
+      color: #ccfbf1;
+      box-shadow: 0 0 8px rgba(45, 212, 191, 0.4);
+    }
+
     .btn-fs {
       background-color: #0369a1;
       border-color: #38bdf8;
@@ -243,15 +255,29 @@
       flex-grow: 1;
       position: relative;
       overflow: hidden;
+      height: 100%;
+      width: 100%;
+      min-height: 0;
+    }
+
+    .ais-body {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     iframe {
       width: 100%;
       height: 100%;
       border: none;
+      flex-grow: 1;
+      min-height: 0;
     }
 
-    /* AIS MAP OVERLAY SHORTCUT BUTTONS (LOWER RIGHT CORNER) */
+    /* AIS MAP OVERLAY SHORTCUT BUTTONS */
     .ais-overlay-stack {
       position: absolute;
       bottom: 12px;
@@ -284,18 +310,16 @@
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.85);
     }
 
-    /* Red Soo Locks Button */
     .btn-overlay-locks {
-      background-color: #b91c1c;
+      background-color: #047857;
       color: #ffffff;
-      border: 2px solid #ef4444;
+      border: 2px solid #10b981;
     }
     .btn-overlay-locks:hover {
-      background-color: #dc2626;
-      border-color: #f87171;
+      background-color: #059669;
+      border-color: #34d399;
     }
 
-    /* Purple Boat Basin Button */
     .btn-overlay-basin {
       background-color: #7e22ce;
       color: #ffffff;
@@ -306,7 +330,6 @@
       border-color: #c084fc;
     }
 
-    /* Yellow Lower Dam Button */
     .btn-overlay-dam {
       background-color: #ca8a04;
       color: #0f172a;
@@ -498,7 +521,7 @@
       min-height: 44px;
     }
 
-    /* BOTTOM RIGHT: ZERO-SCROLL 2-COLUMN FLOATING PLANT GRID (14 SLOTS) */
+    /* BOTTOM RIGHT: ZERO-SCROLL 2-COLUMN FLEET GRID */
     .plant-container {
       padding: 6px 8px;
       display: flex;
@@ -522,11 +545,11 @@
       background: #0f172a;
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      padding: 3px 8px;
+      padding: 2px 7px;
       display: grid;
-      grid-template-columns: 1.35fr auto auto 1.3fr;
+      grid-template-columns: 1.15fr auto auto auto 1.35fr;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       min-height: 0;
     }
 
@@ -540,7 +563,6 @@
       flex-direction: column;
       justify-content: center;
       min-width: 0;
-      cursor: pointer;
     }
 
     .vessel-name-btn {
@@ -548,7 +570,7 @@
       border: none;
       text-align: left;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.76rem;
       color: #38bdf8;
       cursor: pointer;
       padding: 0;
@@ -566,8 +588,17 @@
       text-decoration: underline;
     }
 
+    .vessel-name-disabled {
+      color: #cbd5e1;
+      cursor: default;
+    }
+    .vessel-name-disabled:hover {
+      text-decoration: none;
+      color: #cbd5e1;
+    }
+
     .vessel-type {
-      font-size: 0.62rem;
+      font-size: 0.56rem;
       color: var(--text-muted);
       white-space: nowrap;
       overflow: hidden;
@@ -576,9 +607,9 @@
       margin-top: 1px;
     }
 
-    /* MOTION STATE ICONS (ANCHOR VS UNDERWAY) */
+    /* MOTION STATE ICONS */
     .motion-icon {
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       line-height: 1;
       display: flex;
       align-items: center;
@@ -600,63 +631,82 @@
       50% { opacity: 0.75; transform: scale(1.15); }
     }
 
-    .status-pill {
+    /* LOCATION SOURCE BADGE (AIS VS MANUAL) */
+    .source-badge {
       display: inline-block;
-      padding: 2px 6px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 0.67rem;
-      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-weight: 800;
+      font-size: 0.58rem;
       user-select: none;
       text-align: center;
-      min-width: 42px;
+      min-width: 38px;
+      line-height: 1.1;
+      cursor: pointer;
     }
 
-    .status-FMC { background-color: rgba(16, 185, 129, 0.2); color: var(--fmc-green); border: 1px solid var(--fmc-green); }
-    .status-PMC { background-color: rgba(245, 158, 11, 0.2); color: var(--pmc-amber); border: 1px solid var(--pmc-amber); }
-    .status-NMC { background-color: rgba(239, 68, 68, 0.2); color: var(--nmc-red); border: 1px solid var(--nmc-red); }
+    .source-AIS {
+      background-color: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+      border: 1px solid #0284c7;
+    }
 
-    /* LOCATION COLOR CODING */
+    .source-Manual {
+      background-color: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border: 1px solid #d97706;
+    }
+
+    /* TIMESTAMP BETWEEN SOURCE AND LOCATION */
+    .timestamp-inline {
+      font-size: 0.56rem;
+      font-weight: 700;
+      color: #94a3b8;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      text-align: center;
+      line-height: 1;
+      padding: 0 2px;
+    }
+
+    /* PULLDOWN MENUS WITH SOLID BLACK BACKGROUND & WHITE TEXT */
     .location-wrapper {
       position: relative;
       display: flex;
       align-items: center;
       min-width: 0;
+      width: 100%;
     }
 
-    .location-badge {
+    .location-select {
       width: 100%;
-      padding: 3px 6px;
-      font-size: 0.68rem;
+      padding: 2px 4px;
+      font-size: 0.65rem;
       font-weight: 700;
       border-radius: 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-align: center;
-      user-select: none;
-      transition: all 0.2s;
-    }
-
-    /* Purple for Boat Basin */
-    .loc-boat-basin {
-      color: #e9d5ff;
-      border: 1px solid #a855f7;
-      background-color: rgba(168, 85, 247, 0.22);
-    }
-
-    /* Yellow for Lower Dam */
-    .loc-lower-dam {
-      color: #fef08a;
-      border: 1px solid #eab308;
-      background-color: rgba(234, 179, 8, 0.22);
-    }
-
-    /* White / Neutral for all other locations */
-    .loc-neutral {
-      color: #ffffff;
+      background-color: #000000 !important;
+      color: #ffffff !important;
       border: 1px solid #475569;
-      background-color: #1e293b;
+      cursor: pointer;
+      outline: none;
+      text-overflow: ellipsis;
+    }
+
+    .location-select option {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .location-select.loc-boat-basin {
+      border: 1px solid #a855f7 !important;
+      box-shadow: 0 0 3px rgba(168, 85, 247, 0.4);
+    }
+
+    .location-select.loc-lower-dam {
+      border: 1px solid #eab308 !important;
+      box-shadow: 0 0 3px rgba(234, 179, 8, 0.4);
     }
 
     /* 14th SLOT LEGEND CARD */
@@ -664,7 +714,7 @@
       background: #090e1a;
       border: 1px dashed #475569;
       border-radius: 6px;
-      padding: 3px 8px;
+      padding: 3px 6px;
       display: flex;
       align-items: center;
       justify-content: space-around;
@@ -676,7 +726,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      font-size: 0.65rem;
+      font-size: 0.64rem;
       font-weight: 700;
       white-space: nowrap;
     }
@@ -684,9 +734,21 @@
     .legend-tag {
       padding: 2px 5px;
       border-radius: 3px;
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       font-weight: 800;
       line-height: 1.1;
+    }
+
+    .loc-boat-basin-tag {
+      color: #e9d5ff;
+      border: 1px solid #a855f7;
+      background-color: rgba(168, 85, 247, 0.25);
+    }
+
+    .loc-lower-dam-tag {
+      color: #fef08a;
+      border: 1px solid #eab308;
+      background-color: rgba(234, 179, 8, 0.25);
     }
 
     .notes-bar {
@@ -719,8 +781,9 @@
     </div>
     <div class="header-controls">
       <button class="btn btn-fs" id="btnFullscreen" onclick="toggleDashboardFullscreen()" title="Tap to enter or exit full-screen kiosk display">⛶ Fullscreen</button>
+      <button class="btn btn-awake active" id="btnAwake" onclick="toggleScreenWakeLock()" title="Keeps SMART Board display awake and prevents sleep mode">☕ Awake: ON</button>
       <button class="btn btn-refresh-all" onclick="refreshAllFrames()" title="Synchronize AIS map, river cam, weather radar, NOAA gauges, and fleet locations">↻ Refresh All</button>
-      <div class="version-tag" id="appVersion">v2.2</div>
+      <div class="version-tag" id="appVersion">v3.2</div>
       <div class="clock-box">
         <div class="clock-time" id="localClock">00:00:00</div>
         <div class="clock-date" id="localDate">Loading Date...</div>
@@ -743,18 +806,18 @@
           <button class="btn" id="btnMt" onclick="switchAisProvider('marinetraffic')">MarineTraffic</button>
         </div>
       </div>
-      <div class="panel-body">
+      <div class="panel-body ais-body">
         <iframe id="aisFrame" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
 
         <!-- OVERLAY SHORTCUT BUTTONS ON LOWER-RIGHT OF AIS MAP -->
         <div class="ais-overlay-stack">
           <button class="btn-overlay btn-overlay-locks" onclick="resetAisToLocks()" title="Center AIS map on Soo Locks (~3,000 ft view)">
-            🔴 Soo Locks
+            🟢 Soo Locks
           </button>
-          <button class="btn-overlay btn-overlay-basin" onclick="panToBoatBasin()" title="Center AIS map on Boat Basin">
+          <button class="btn-overlay btn-overlay-basin" onclick="panToBoatBasin()" title="Center AIS map on Boat Basin (~2,000 ft view)">
             🟣 Boat Basin
           </button>
-          <button class="btn-overlay btn-overlay-dam" onclick="panToLowerDam()" title="Center AIS map on Lower Dam (East of Rock Cut)">
+          <button class="btn-overlay btn-overlay-dam" onclick="panToLowerDam()" title="Center AIS map on Lower Dam (~2,000 ft view)">
             🟡 Lower Dam
           </button>
         </div>
@@ -888,9 +951,9 @@
     <!-- QUADRANT 4: ST. MARYS RIVER FLOATING PLANT FLEET (2-COLUMN ZERO-SCROLL VIEW WITH 14TH SLOT LEGEND) -->
     <div class="panel">
       <div class="panel-header">
-        <div class="panel-title">⚓ St. Marys River Fleet (Tap Vessel to Track | Tap Status to Cycle FMC/PMC/NMC)</div>
+        <div class="panel-title">⚓ St. Marys River Fleet (Tap Vessel to Track | Pulldown Location / Source)</div>
         <div class="panel-actions">
-          <span class="badge-stream" id="aisStreamBadge">AIS: Active</span>
+          <span class="badge-stream" id="aisStreamBadge">AIS: Synced</span>
         </div>
       </div>
       <div class="panel-body">
@@ -911,9 +974,9 @@
 
   <script>
     // =========================================================================
-    // 0. FULLSCREEN KIOSK ENGINE (Interactive Display & SMART Board Touch Safe)
+    // 0. FULLSCREEN KIOSK & SCREEN KEEP-AWAKE
     // =========================================================================
-    const CURRENT_DASHBOARD_VERSION = "v2.2";
+    const CURRENT_DASHBOARD_VERSION = "v3.2";
 
     function isCurrentlyFullscreen() {
       return !!(
@@ -935,7 +998,7 @@
         if (requestMethod) {
           requestMethod.call(docEl).catch(err => {
             console.warn("Fullscreen request error:", err);
-            alert("SMART Board note: Press F11 or configure Chrome with '--kiosk' if full-screen toggle is intercepted.");
+            alert("SMART Board note: Press F11 or launch Chrome with '--kiosk' if full-screen toggle is intercepted.");
           });
         }
       } else {
@@ -959,15 +1022,83 @@
         fsBtn.textContent = '⛶ Fullscreen';
         fsBtn.classList.remove('btn-active');
       }
+      setTimeout(handleResize, 150);
     }
 
+    function handleResize() {
+      const aisFrame = document.getElementById('aisFrame');
+      if (aisFrame) {
+        aisFrame.style.height = '100%';
+        aisFrame.style.width = '100%';
+      }
+    }
+
+    window.addEventListener('resize', handleResize);
     document.addEventListener('fullscreenchange', updateFullscreenButtonState);
     document.addEventListener('webkitfullscreenchange', updateFullscreenButtonState);
     document.addEventListener('mozfullscreenchange', updateFullscreenButtonState);
     document.addEventListener('MSFullscreenChange', updateFullscreenButtonState);
 
+    // SCREEN KEEP-AWAKE LOGIC
+    let wakeLockSentinel = null;
+    let wakeLockEnabled = true;
+
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLockSentinel = await navigator.wakeLock.request('screen');
+          wakeLockSentinel.addEventListener('release', () => {
+            if (wakeLockEnabled) {
+              requestWakeLock();
+            }
+          });
+          updateWakeLockButtonState(true);
+        } else {
+          updateWakeLockButtonState(true, true);
+        }
+      } catch (err) {
+        console.warn("Wake Lock request warning:", err);
+        updateWakeLockButtonState(false);
+      }
+    }
+
+    function releaseWakeLock() {
+      if (wakeLockSentinel) {
+        wakeLockSentinel.release();
+        wakeLockSentinel = null;
+      }
+      updateWakeLockButtonState(false);
+    }
+
+    function toggleScreenWakeLock() {
+      wakeLockEnabled = !wakeLockEnabled;
+      if (wakeLockEnabled) {
+        requestWakeLock();
+      } else {
+        releaseWakeLock();
+      }
+    }
+
+    function updateWakeLockButtonState(active, fallback = false) {
+      const btn = document.getElementById('btnAwake');
+      if (active) {
+        btn.className = 'btn btn-awake active';
+        btn.textContent = fallback ? '☕ Awake: ON (Loop)' : '☕ Awake: ON';
+      } else {
+        btn.className = 'btn btn-awake';
+        btn.textContent = '💤 Sleep: Allowed';
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && wakeLockEnabled) {
+        requestWakeLock();
+      }
+    });
+    requestWakeLock();
+
     // =========================================================================
-    // 1. HARDCODED NUMERIC KML POLYGONS & RECTIFIED GEOFENCE RESOLUTION ENGINE
+    // 1. REVERTED v2.3 NUMERIC KML POLYGONS & RECTIFIED GEOFENCE ENGINE
     // =========================================================================
     const SOO_LOCKS_CENTER = {
       name: "Soo Locks",
@@ -976,7 +1107,27 @@
       zoom: 15
     };
 
-    // Stored as [lat, lon] floating-point numbers directly from Dashboard.txt
+    const OFFICIAL_LOCATIONS = [
+      "Boat Basin",
+      "Lower Dam",
+      "Holmstead",
+      "Slab Dock",
+      "Lock Chamber",
+      "Rock Cut",
+      "East Approach",
+      "West Approach",
+      "St Marys East",
+      "St Marys West",
+      "Sugar Island East",
+      "Sugar Island West",
+      "Neebish Island",
+      "Detour",
+      "Mackinaw Straights",
+      "Whitefish Bay",
+      "Lake Huron",
+      "Lake Superior"
+    ];
+
     const KML_POLYGONS = [
       {
         name: "Boat Basin",
@@ -1317,7 +1468,7 @@
 
     function resolveKmlGeofence(lat, lon) {
       if (typeof lat !== 'number' || typeof lon !== 'number' || isNaN(lat) || isNaN(lon)) {
-        return "Unknown";
+        return "Boat Basin";
       }
 
       for (const poly of KML_POLYGONS) {
@@ -1326,7 +1477,7 @@
         }
       }
 
-      let closestPoly = "Unknown";
+      let closestPoly = "Boat Basin";
       let minDistance = Infinity;
 
       for (const poly of KML_POLYGONS) {
@@ -1339,10 +1490,25 @@
       return closestPoly;
     }
 
-    function getLocationColorClass(locationName) {
+    function getLocationClass(locationName) {
       if (locationName === "Boat Basin") return "loc-boat-basin";
       if (locationName === "Lower Dam") return "loc-lower-dam";
-      return "loc-neutral";
+      return "";
+    }
+
+    function formatActualDateTime(isoString) {
+      if (!isoString) return "--/-- --:--";
+      try {
+        const d = new Date(isoString);
+        if (isNaN(d.getTime())) return "--/-- --:--";
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const hours = String(d.getHours()).padStart(2, '0');
+        const mins = String(d.getMinutes()).padStart(2, '0');
+        return `${month}/${day} ${hours}:${mins}`;
+      } catch (e) {
+        return "--/-- --:--";
+      }
     }
 
     // =========================================================================
@@ -1362,7 +1528,7 @@
     updateClock();
 
     // =========================================================================
-    // 3. YOUTUBE LIVE CAM ENGINE (Strict-origin + Header expand toggle)
+    // 3. YOUTUBE LIVE CAM ENGINE
     // =========================================================================
     const currentCamId = 'TkY4BzCikQ4';
     let topRightShowingCam = false;
@@ -1426,12 +1592,12 @@
 
       if (trackedMmsi) {
         label.textContent = `Tracking ${trackedName} (MMSI: ${trackedMmsi})`;
-        zoom = 16;
+        zoom = 17;
       } else if (customCenter) {
         label.textContent = `${customCenter.name} (${customCenter.lat.toFixed(4)}°N, ${Math.abs(customCenter.lon).toFixed(4)}°W)`;
         lat = customCenter.lat;
         lon = customCenter.lon;
-        zoom = customCenter.zoom || 16;
+        zoom = customCenter.zoom || 17;
       } else {
         label.textContent = `${SOO_LOCKS_CENTER.name} (46.5015°N, 84.3465°W)`;
       }
@@ -1495,6 +1661,7 @@
     }
 
     function trackVesselMmsi(mmsi, name) {
+      if (!mmsi || mmsi.startsWith('BARGE') || mmsi === 'SHADNAW' || mmsi === "366999311" || mmsi === "368926311") return;
       customCenter = null;
       trackedMmsi = mmsi;
       trackedName = name;
@@ -1516,7 +1683,7 @@
         name: "Boat Basin",
         lat: 46.501422,
         lon: -84.340908,
-        zoom: 16
+        zoom: 17
       };
       aisSeconds = 900;
       renderAisMap();
@@ -1528,7 +1695,7 @@
         name: "Lower Dam",
         lat: 46.264297,
         lon: -84.191675,
-        zoom: 16
+        zoom: 17
       };
       aisSeconds = 900;
       renderAisMap();
@@ -1575,7 +1742,7 @@
     }
 
     // =========================================================================
-    // 6. FETCH LIVE NOAA CO-OPS GAUGE DATA FOR ST. MARYS RIVER
+    // 6. FETCH LIVE NOAA CO-OPS GAUGE DATA
     // =========================================================================
     async function fetchNoaaData() {
       try {
@@ -1612,25 +1779,25 @@
     setInterval(fetchNoaaData, 300000);
 
     // =========================================================================
-    // 7. TWO-COLUMN FLOATING PLANT FLEET (INITIAL BERTHS RESTORED)
+    // 7. TWO-COLUMN FLEET GRID WITH SERVER-SYNC & TIMESTAMP OVERWRITES
     // =========================================================================
     const defaultFleet = [
-      { name: "NICOLET",    type: "Derrick Barge",   mmsi: "366999398", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 },
-      { name: "HARVEY",     type: "Crane Barge",     mmsi: "366999311", status: "FMC", lat: 46.5013, lon: -84.3411, sog: 0.0 },
-      { name: "AQUADIGGER", type: "Excavator Barge", mmsi: "368926311", status: "FMC", lat: 46.5015, lon: -84.3408, sog: 0.0 },
-      { name: "CHERAW",     type: "Tug",             mmsi: "366999428", status: "FMC", lat: 46.5030, lon: -84.4500, sog: 6.2 },
-      { name: "PEARCE",     type: "Tug",             mmsi: "338924169", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 },
-      { name: "LAWSON",     type: "Tug",             mmsi: "338924170", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 },
-      { name: "DETROIT",    type: "Tug",             mmsi: "338925325", status: "FMC", lat: 46.5014, lon: -84.3410, sog: 0.0 },
-      { name: "FREDERICK",  type: "Tug",             mmsi: "366999409", status: "FMC", lat: 46.5028, lon: -84.3510, sog: 0.0 },
-      { name: "WHITEFISH",  type: "Tug",             mmsi: "366999314", status: "FMC", lat: 46.5030, lon: -84.3520, sog: 0.0 },
-      { name: "BUFE",       type: "Survey Boat",     mmsi: "366999407", status: "FMC", lat: 46.5014, lon: -84.3408, sog: 0.0 },
-      { name: "MACKIN",     type: "Survey Boat",     mmsi: "368389980", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 },
-      { name: "MUNSON",     type: "Launch Boat",     mmsi: "368926566", status: "FMC", lat: 46.5040, lon: -84.3450, sog: 0.0 },
-      { name: "SAFEBOAT",   type: "Launch Boat",     mmsi: "369970895", status: "FMC", lat: 46.5014, lon: -84.3409, sog: 0.0 }
+      { name: "LAWSON",     type: "Tug",             mmsi: "338924170", hasAis: true,  location: "Boat Basin", source: "AIS",    lat: 46.5014, lon: -84.3409, sog: 0.0, updated: null },
+      { name: "NICOLET",    type: "Derrick Barge",   mmsi: "366999398", hasAis: true,  location: "Boat Basin", source: "AIS",    lat: 46.5014, lon: -84.3409, sog: 0.0, updated: null },
+      { name: "PEARCE",     type: "Tug",             mmsi: "338924169", hasAis: true,  location: "Boat Basin", source: "AIS",    lat: 46.5014, lon: -84.3409, sog: 0.0, updated: null },
+      { name: "HARVEY",     type: "Crane Barge",     mmsi: "366999311", hasAis: false, location: "Boat Basin", source: "Manual", lat: 46.5013, lon: -84.3411, sog: 0.0, updated: null },
+      { name: "DETROIT",    type: "Tug",             mmsi: "338925325", hasAis: true,  location: "Boat Basin", source: "AIS",    lat: 46.5014, lon: -84.3410, sog: 0.0, updated: null },
+      { name: "300 BARGE",  type: "Crane Barge",     mmsi: "BARGE300",  hasAis: false, location: "Boat Basin", source: "Manual", lat: 46.5014, lon: -84.3409, sog: 0.0, updated: null },
+      { name: "CHERAW",     type: "Tug",             mmsi: "366999428", hasAis: true,  location: "West Approach", source: "AIS", lat: 46.5030, lon: -84.3600, sog: 6.2, updated: null },
+      { name: "AQUADIGGER", type: "Excavator Barge", mmsi: "368926311", hasAis: false, location: "Boat Basin", source: "Manual", lat: 46.5015, lon: -84.3408, sog: 0.0, updated: null },
+      { name: "MACKIN",     type: "Survey Boat",     mmsi: "368389980", hasAis: true,  location: "Boat Basin", source: "AIS",    lat: 46.5014, lon: -84.3409, sog: 0.0, updated: null },
+      { name: "BUFE",       type: "Survey Boat",     mmsi: "366999407", hasAis: true,  location: "Boat Basin", source: "AIS",    lat: 46.5014, lon: -84.3408, sog: 0.0, updated: null },
+      { name: "MUNSON",     type: "Launch Boat",     mmsi: "368926566", hasAis: true,  location: "Boat Basin", source: "AIS",    lat: 46.4990, lon: -84.3350, sog: 0.0, updated: null },
+      { name: "SAFEBOAT",   type: "Launch Boat",     mmsi: "369970895", hasAis: true,  location: "Boat Basin", source: "AIS",    lat: 46.5014, lon: -84.3409, sog: 0.0, updated: null },
+      { name: "SHADNAW",    type: "Crane Barge",     mmsi: "SHADNAW",   hasAis: false, location: "Boat Basin", source: "Manual", lat: 46.5014, lon: -84.3409, sog: 0.0, updated: null }
     ];
 
-    const STORAGE_KEY = 'usace_stmarys_fleet_v2_2';
+    const STORAGE_KEY = 'usace_stmarys_fleet_v3_2';
     let fleetData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultFleet;
 
     function renderFleet() {
@@ -1638,86 +1805,175 @@
       grid.innerHTML = '';
 
       fleetData.forEach((unit, idx) => {
-        const detectedLoc = resolveKmlGeofence(unit.lat, unit.lon);
-        unit.location = detectedLoc;
-        const colorClass = getLocationColorClass(detectedLoc);
+        if (unit.source === "AIS") {
+          unit.location = resolveKmlGeofence(unit.lat, unit.lon);
+        }
 
         const isUnderway = (unit.sog !== undefined && unit.sog > 0.5);
         const motionIcon = isUnderway 
           ? `<span class="motion-icon motion-underway" title="Underway (SOG: ${unit.sog || 0} kts)">🌊</span>`
-          : `<span class="motion-icon motion-moored" title="Moored / Stationary (SOG: ${unit.sog || 0} kts)">⚓</span>`;
+          : `<span class="motion-icon motion-moored" title="Moored / Stationary">⚓</span>`;
+
+        const nameButton = unit.hasAis 
+          ? `<button class="vessel-name-btn" onclick="trackVesselMmsi('${unit.mmsi}', '${unit.name}')" title="Tap to track ${unit.name} on AIS">
+              <span>🎯</span> <span>${unit.name}</span>
+            </button>`
+          : `<span class="vessel-name-btn vessel-name-disabled" title="Tracking disabled for this asset">
+              <span>🚫</span> <span>${unit.name}</span>
+            </span>`;
+
+        const locClass = getLocationClass(unit.location);
+        const actualTimeText = formatActualDateTime(unit.updated);
+
+        let optionsHtml = '';
+        OFFICIAL_LOCATIONS.forEach(loc => {
+          const selected = (unit.location === loc) ? 'selected' : '';
+          optionsHtml += `<option value="${loc}" ${selected}>${loc}</option>`;
+        });
 
         const card = document.createElement('div');
         card.className = 'vessel-card';
 
         card.innerHTML = `
-          <div class="vessel-info" onclick="trackVesselMmsi('${unit.mmsi}', '${unit.name}')" title="Tap to track ${unit.name} on AIS">
-            <button class="vessel-name-btn">
-              <span>🎯</span> <span>${unit.name}</span>
-            </button>
+          <div class="vessel-info">
+            ${nameButton}
             <div class="vessel-type">${unit.type}</div>
           </div>
           ${motionIcon}
-          <span class="status-pill status-${unit.status}" onclick="cycleStatus(${idx})" title="Tap to toggle FMC / PMC / NMC">${unit.status}</span>
+          <span class="source-badge source-${unit.source}" onclick="toggleSource(${idx})" title="Location Source: Tap to toggle between AIS and Manual">${unit.source}</span>
+          <span class="timestamp-inline" title="Last update timestamp: ${unit.updated || 'Initial Default'}">${actualTimeText}</span>
           <div class="location-wrapper">
-            <div class="location-badge ${colorClass}" title="Location: ${detectedLoc} | SOG: ${unit.sog || 0} kts">
-              ${detectedLoc}
-            </div>
+            <select class="location-select ${locClass}" onchange="handleLocationChange(${idx}, this.value)">
+              ${optionsHtml}
+            </select>
           </div>
         `;
         grid.appendChild(card);
       });
 
+      // Render 14th Slot Legend Card (Row 7, Column 2)
       const legendSlot = document.createElement('div');
       legendSlot.className = 'legend-card';
       legendSlot.innerHTML = `
         <div class="legend-item" title="Vessel is inside or closest to USACE Boat Basin">
-          <span class="legend-tag loc-boat-basin">BASIN</span>
+          <span class="legend-tag loc-boat-basin-tag">BASIN</span>
           <span style="color:#e9d5ff;">Boat Basin</span>
         </div>
         <div class="legend-item" title="Vessel is inside or closest to Lower Dam">
-          <span class="legend-tag loc-lower-dam">DAM</span>
+          <span class="legend-tag loc-lower-dam-tag">DAM</span>
           <span style="color:#fef08a;">Lower Dam</span>
         </div>
       `;
       grid.appendChild(legendSlot);
     }
 
-    function cycleStatus(idx) {
-      const order = ['FMC', 'PMC', 'NMC'];
-      const current = fleetData[idx].status;
-      fleetData[idx].status = order[(order.indexOf(current) + 1) % order.length];
+    // Manual change: sets state to moored (sog=0), source to Manual, records timestamp, and queues sync
+    function handleLocationChange(idx, newLoc) {
+      fleetData[idx].location = newLoc;
+      fleetData[idx].source = "Manual";
+      fleetData[idx].sog = 0.0;
+      fleetData[idx].updated = new Date().toISOString();
       saveFleet();
       renderFleet();
+      syncManualPositionToServer(fleetData[idx]);
+    }
+
+    function toggleSource(idx) {
+      fleetData[idx].source = (fleetData[idx].source === "AIS") ? "Manual" : "AIS";
+      if (fleetData[idx].source === "Manual") {
+        fleetData[idx].sog = 0.0;
+      }
+      fleetData[idx].updated = new Date().toISOString();
+      saveFleet();
+      renderFleet();
+      syncManualPositionToServer(fleetData[idx]);
     }
 
     function saveFleet() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(fleetData));
     }
 
+    // Optional direct GitHub API synchronization
+    async function syncManualPositionToServer(vessel) {
+      const gitHubToken = localStorage.getItem('usace_github_pat');
+      const gitHubRepo = localStorage.getItem('usace_github_repo'); // e.g. "username/repo"
+      if (!gitHubToken || !gitHubRepo) return;
+
+      try {
+        const fileUrl = `https://api.github.com/repos/${gitHubRepo}/contents/fleet_positions.json`;
+        const getRes = await fetch(fileUrl, {
+          headers: { 'Authorization': `token ${gitHubToken}`, 'Accept': 'application/vnd.github.v3+json' }
+        });
+        if (!getRes.ok) return;
+        const fileData = await getRes.json();
+        const currentContent = JSON.parse(atob(fileData.content));
+
+        currentContent[vessel.mmsi] = {
+          ...(currentContent[vessel.mmsi] || {}),
+          name: vessel.name,
+          location: vessel.location,
+          source: "Manual",
+          sog: 0.0,
+          updated: vessel.updated
+        };
+
+        await fetch(fileUrl, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${gitHubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `Manual update: ${vessel.name} to ${vessel.location}`,
+            content: btoa(JSON.stringify(currentContent, null, 2)),
+            sha: fileData.sha
+          })
+        });
+        console.log(`Synced ${vessel.name} update to GitHub repository.`);
+      } catch (e) {
+        console.warn("Server sync notice:", e);
+      }
+    }
+
     // =========================================================================
-    // 8. OPTION A: REPO-BASED LIVE TELEMETRY FETCHER
+    // 8. SERVER-SIDE TELEMETRY FETCHER WITH TIMESTAMP OVERWRITE RULE
     // =========================================================================
     async function fetchFleetPositions() {
       try {
-        const res = await fetch('./fleet_positions.json?t=' + new Date().getTime());
+        const res = await fetch('./fleet_positions.json?t=' + Date.now());
         if (res.ok) {
           const livePositions = await res.json();
-          let updated = false;
+          let updatedAny = false;
 
           fleetData.forEach(unit => {
-            if (livePositions[unit.mmsi]) {
-              const pos = livePositions[unit.mmsi];
-              if (typeof pos.lat === 'number' && typeof pos.lon === 'number') {
-                unit.lat = pos.lat;
-                unit.lon = pos.lon;
-                unit.sog = pos.sog || 0.0;
-                updated = true;
+            const serverData = livePositions[unit.mmsi];
+            if (serverData) {
+              const serverTime = serverData.updated ? new Date(serverData.updated).getTime() : 0;
+              const localTime = unit.updated ? new Date(unit.updated).getTime() : 0;
+
+              // AIS overwrites if it has a newer timestamp than the manual entry
+              if (serverTime >= localTime) {
+                if (serverData.source === "AIS" && typeof serverData.lat === 'number' && typeof serverData.lon === 'number') {
+                  unit.lat = serverData.lat;
+                  unit.lon = serverData.lon;
+                  unit.sog = serverData.sog || 0.0;
+                  unit.source = "AIS";
+                  unit.location = resolveKmlGeofence(serverData.lat, serverData.lon);
+                  unit.updated = serverData.updated || new Date().toISOString();
+                  updatedAny = true;
+                } else if (serverData.source === "Manual" && serverData.location) {
+                  unit.location = serverData.location;
+                  unit.source = "Manual";
+                  unit.sog = 0.0;
+                  unit.updated = serverData.updated;
+                  updatedAny = true;
+                }
               }
             }
           });
 
-          if (updated) {
+          if (updatedAny) {
             saveFleet();
             renderFleet();
             const badge = document.getElementById('aisStreamBadge');
@@ -1726,7 +1982,7 @@
           }
         }
       } catch (err) {
-        console.log("Using cached/known berths. Background feed check:", err);
+        console.log("Background telemetry check:", err);
       }
     }
 
@@ -1734,15 +1990,15 @@
     setInterval(fetchFleetPositions, 60000);
 
     const notesEl = document.getElementById('dailyNotes');
-    notesEl.value = localStorage.getItem('usace_stmarys_notes_v2_2') || "0700 Tailboard Brief | Verify cold-water PPE & VHF Ch. 12/14/16 comms with VTS St. Marys River.";
+    notesEl.value = localStorage.getItem('usace_stmarys_notes_v3_2') || "0700 Tailboard Brief | Verify cold-water PPE & VHF Ch. 12/14/16 comms with VTS St. Marys River.";
     notesEl.addEventListener('input', () => {
-      localStorage.setItem('usace_stmarys_notes_v2_2', notesEl.value);
+      localStorage.setItem('usace_stmarys_notes_v3_2', notesEl.value);
     });
 
     const bnmEl = document.getElementById('uscgBnmNotes');
-    bnmEl.value = localStorage.getItem('usace_stmarys_bnm_v2_2') || "• Monitor VTS Sault Ste. Marie Ch. 12 for downbound laker traffic.\n• Check weekly D9 LNM for St. Marys River buoy/light discrepancies.";
+    bnmEl.value = localStorage.getItem('usace_stmarys_bnm_v3_2') || "• Monitor VTS Sault Ste. Marie Ch. 12 for downbound laker traffic.\n• Check weekly D9 LNM for St. Marys River buoy/light discrepancies.";
     bnmEl.addEventListener('input', () => {
-      localStorage.setItem('usace_stmarys_bnm_v2_2', bnmEl.value);
+      localStorage.setItem('usace_stmarys_bnm_v3_2', bnmEl.value);
     });
 
     renderFleet();
