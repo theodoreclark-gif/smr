@@ -33,5 +33,4 @@ jobs:
           else
             echo "FAILED: GitHub returned HTTP $STATUS."
             exit 1
-      
           fi
