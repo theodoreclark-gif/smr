@@ -1,15 +1,119 @@
 {
-  "338924170": { "name": "LAWSON", "location": "Boat Basin", "source": "AIS", "lat": 46.5014, "lon": -84.3409, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "366999398": { "name": "NICOLET", "location": "Boat Basin", "source": "AIS", "lat": 46.5014, "lon": -84.3409, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "338924169": { "name": "PEARCE", "location": "Boat Basin", "source": "AIS", "lat": 46.5014, "lon": -84.3409, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "366999311": { "name": "HARVEY", "location": "Boat Basin", "source": "AIS", "lat": 46.5013, "lon": -84.3411, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "338925325": { "name": "DETROIT", "location": "Boat Basin", "source": "AIS", "lat": 46.5014, "lon": -84.3410, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "BARGE300":  { "name": "300 BARGE", "location": "Boat Basin", "source": "Manual", "lat": 46.5014, "lon": -84.3409, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "366999428": { "name": "CHERAW", "location": "West Approach", "source": "AIS", "lat": 46.5030, "lon": -84.3600, "sog": 6.2, "updated": "2025-05-20T10:00:00.000Z" },
-  "368926311": { "name": "AQUADIGGER", "location": "Boat Basin", "source": "AIS", "lat": 46.5015, "lon": -84.3408, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "368389980": { "name": "MACKIN", "location": "Boat Basin", "source": "AIS", "lat": 46.5014, "lon": -84.3409, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "366999407": { "name": "BUFE", "location": "Boat Basin", "source": "AIS", "lat": 46.5014, "lon": -84.3408, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "368926566": { "name": "MUNSON", "location": "Boat Basin", "source": "AIS", "lat": 46.4990, "lon": -84.3350, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "369970895": { "name": "SAFEBOAT", "location": "Boat Basin", "source": "AIS", "lat": 46.5014, "lon": -84.3409, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" },
-  "SHADNAW":   { "name": "SHADNAW", "location": "Boat Basin", "source": "Manual", "lat": 46.5014, "lon": -84.3409, "sog": 0.0, "updated": "2025-05-20T10:00:00.000Z" }
+  "338924169": {
+    "name": "PEARCE",
+    "location": "Boat Basin",
+    "source": "AIS",
+    "lat": 46.5014,
+    "lon": -84.3409,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "338924170": {
+    "name": "LAWSON",
+    "location": "Boat Basin",
+    "source": "AIS",
+    "lat": 46.378706666666666,
+    "lon": -84.226865,
+    "sog": 8.3,
+    "updated": "2026-10-28T14:35:36.858Z"
+  },
+  "338925325": {
+    "name": "DETROIT",
+    "location": "Boat Basin",
+    "source": "AIS",
+    "lat": 46.5014,
+    "lon": -84.341,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "366999311": {
+    "name": "HARVEY",
+    "location": "Boat Basin",
+    "source": "AIS",
+    "lat": 46.5013,
+    "lon": -84.3411,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "366999398": {
+    "name": "NICOLET",
+    "location": "Boat Basin",
+    "source": "AIS",
+    "lat": 46.5014,
+    "lon": -84.3409,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "366999407": {
+    "name": "BUFE",
+    "location": "Boat Basin",
+    "source": "AIS",
+    "lat": 46.5014,
+    "lon": -84.3408,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "366999428": {
+    "name": "CHERAW",
+    "location": "West Approach",
+    "source": "AIS",
+    "lat": 46.503,
+    "lon": -84.36,
+    "sog": 6.2,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "368389980": {
+    "name": "MACKIN",
+    "location": "Boat Basin",
+    "source": "AIS",
+    "lat": 46.5014,
+    "lon": -84.3409,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "368926311": {
+    "name": "AQUADIGGER",
+    "location": "Boat Basin",
+    "source": "AIS",
+    "lat": 46.5015,
+    "lon": -84.3408,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "368926566": {
+    "name": "MUNSON",
+    "location": "Boat Basin",
+    "source": "AIS",
+    "lat": 46.499,
+    "lon": -84.335,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "369970895": {
+    "name": "SAFEBOAT",
+    "location": "Boat Basin",
+    "source": "AIS",
+    "lat": 46.5014,
+    "lon": -84.3409,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "BARGE300": {
+    "name": "300 BARGE",
+    "location": "Boat Basin",
+    "source": "Manual",
+    "lat": 46.5014,
+    "lon": -84.3409,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  },
+  "SHADNAW": {
+    "name": "SHADNAW",
+    "location": "Boat Basin",
+    "source": "Manual",
+    "lat": 46.5014,
+    "lon": -84.3409,
+    "sog": 0,
+    "updated": "2025-05-20T10:00:00.000Z"
+  }
 }
