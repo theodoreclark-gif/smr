@@ -66,10 +66,10 @@
     "name": "MACKIN",
     "location": "Boat Basin",
     "source": "AIS",
-    "lat": 46.5014,
-    "lon": -84.3409,
-    "sog": 0,
-    "updated": "2025-05-20T10:00:00.000Z"
+    "lat": 46.065241666666665,
+    "lon": -83.99953000000001,
+    "sog": 4.7,
+    "updated": "2026-10-29T15:15:10.224Z"
   },
   "368926311": {
     "name": "AQUADIGGER",
