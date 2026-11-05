@@ -21,10 +21,10 @@
     "name": "DETROIT",
     "location": "Boat Basin",
     "source": "AIS",
-    "lat": 46.5014,
-    "lon": -84.341,
-    "sog": 0,
-    "updated": "2025-05-20T10:00:00.000Z"
+    "lat": 46.30633,
+    "lon": -84.21495333333334,
+    "sog": 6.6,
+    "updated": "2026-11-05T15:23:17.077Z"
   },
   "366999311": {
     "name": "HARVEY",
