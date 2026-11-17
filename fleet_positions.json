@@ -105,13 +105,13 @@
   },
   "BARGE300": {
     "name": "300 BARGE",
-    "location": "Boat Basin",
+    "location": "Lock Chamber",
     "source": "Manual",
     "lat": 46.5014,
     "lon": -84.3409,
     "sog": 0,
-    "updated": "2026-11-17T17:45:35.051Z",
-    "berth": "Boat Basin"
+    "updated": "2026-11-17T18:10:08.061Z",
+    "berth": "Lock Chamber"
   },
   "SHADNAW": {
     "name": "SHADNAW",
