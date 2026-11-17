@@ -37,12 +37,12 @@
   },
   "366999398": {
     "name": "NICOLET",
-    "location": "Boat Basin",
-    "source": "AIS",
+    "location": "Lower Dam",
+    "source": "Manual",
     "lat": 46.5014,
     "lon": -84.3409,
     "sog": 0,
-    "updated": "2025-05-20T10:00:00.000Z",
+    "updated": "2026-11-17T17:16:30.179Z",
     "berth": "Lower Dam"
   },
   "366999407": {
