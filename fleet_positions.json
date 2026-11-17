@@ -29,11 +29,12 @@
   "366999311": {
     "name": "HARVEY",
     "location": "Boat Basin",
-    "source": "AIS",
+    "source": "Manual",
     "lat": 46.5013,
     "lon": -84.3411,
     "sog": 0,
-    "updated": "2025-05-20T10:00:00.000Z"
+    "updated": "2026-11-17T17:23:57.508Z",
+    "berth": "Boat Basin"
   },
   "366999398": {
     "name": "NICOLET",
