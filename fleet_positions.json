@@ -77,11 +77,12 @@
   "368926311": {
     "name": "AQUADIGGER",
     "location": "Boat Basin",
-    "source": "AIS",
+    "source": "Manual",
     "lat": 46.5015,
     "lon": -84.3408,
     "sog": 0,
-    "updated": "2025-05-20T10:00:00.000Z"
+    "updated": "2026-11-17T17:22:50.322Z",
+    "berth": "Boat Basin"
   },
   "368926566": {
     "name": "MUNSON",
