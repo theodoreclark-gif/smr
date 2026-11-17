@@ -58,7 +58,7 @@ for(const loc of LOCATIONS){const option=document.createElement('option');option
 if(pos.location&&!LOCATIONS.includes(pos.location)){const option=document.createElement('option');option.value=pos.location;option.textContent=pos.location+' (current)';option.selected=true;select.prepend(option);}
 const button=document.createElement('button');button.className='save';button.textContent='Update Berth';
 const message=document.createElement('div');message.className='message';message.setAttribute('role','status');
-if(!/^\d{9}$/.test(vessel.mmsi)){button.disabled=true;button.textContent='Worker change required';message.className='notice';message.textContent='This vessel uses a nonnumeric ID. The current Worker only accepts 9-digit MMSIs.';}
+if (!(/^\d{9}$/.test(vessel.mmsi) || ["SHADNAW", "BARGE300"].includes(vessel.mmsi))) { button.disabled=true; button.textContent="Worker change required"; message.className="notice"; message.textContent="Unsupported vessel ID"; }
 else button.addEventListener('click',()=>updateBerth(vessel,select,button,message));
 card.append(heading,meta,select,button,message);root.append(card);
 }
