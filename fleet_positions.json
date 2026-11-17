@@ -115,12 +115,12 @@
   },
   "SHADNAW": {
     "name": "SHADNAW",
-    "location": "Boat Basin",
+    "location": "Lake Huron",
     "source": "Manual",
     "lat": 46.5014,
     "lon": -84.3409,
     "sog": 0,
-    "updated": "2026-11-17T17:45:27.487Z",
-    "berth": "Boat Basin"
+    "updated": "2026-11-17T17:46:14.462Z",
+    "berth": "Lake Huron"
   }
 }
