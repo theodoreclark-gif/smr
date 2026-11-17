@@ -56,12 +56,13 @@
   },
   "366999428": {
     "name": "CHERAW",
-    "location": "West Approach",
-    "source": "AIS",
+    "location": "Boat Basin",
+    "source": "Manual",
     "lat": 46.503,
     "lon": -84.36,
-    "sog": 6.2,
-    "updated": "2025-05-20T10:00:00.000Z"
+    "sog": 0,
+    "updated": "2026-11-17T17:18:12.085Z",
+    "berth": "Boat Basin"
   },
   "368389980": {
     "name": "MACKIN",
